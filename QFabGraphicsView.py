@@ -22,7 +22,6 @@ class QFabGraphicsView(pg.GraphicsLayoutWidget):
     sigFSMouseMove = QtCore.pyqtSignal(QtGui.QMouseEvent)
     sigFSMouseRelease = QtCore.pyqtSignal(QtGui.QMouseEvent)
     sigFSWheel = QtCore.pyqtSignal(QtGui.QWheelEvent)
-    sigFSClosed = QtCore.pyqtSignal()
 
     def __init__(self, parent=None, **kwargs):
         super(QFabGraphicsView, self).__init__(parent)
@@ -49,7 +48,6 @@ class QFabGraphicsView(pg.GraphicsLayoutWidget):
 
     def closeEvent(self, event):
         self.camera.close()
-        self.sigFSClosed.emit()
 
     def selectedPoint(self, position):
         index = -1
