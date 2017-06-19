@@ -46,9 +46,6 @@ class QFabGraphicsView(pg.GraphicsLayoutWidget):
         self.traps = pg.ScatterPlotItem(size=10, pen=pen, brush=brush)
         vb.addItem(self.traps)
 
-    def closeEvent(self, event):
-        self.camera.close()
-
     def selectedPoint(self, position):
         index = -1
         points = self.traps.pointsAt(position)

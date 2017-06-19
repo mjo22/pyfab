@@ -16,15 +16,20 @@ class pyfabMainWindow(QtGui.QMainWindow):
     
     def setUpFab(self):
         self.fabscreen = QFabGraphicsView(size=(640,480), gray=True, mirrored=False)
-        self.fabscreen.show()
+        self.setCentralWidget(self.fabscreen)
         self.pattern = QTrappingPattern(self.fabscreen)
         self.slm = QSLM()
         self.slm.show()
         self.pattern.pipeline = CGH(self.slm)
+        self.show()
     
     def setUpGui(self):
-        self.setGeometry(50,50,700,500)
+        #set geometry, window appearance
+        self.setGeometry(640,480,960,720)
         self.setWindowTitle("Pyfab")
+        #set menu bar
+        mainMenu = self.menuBar()
+        mainMenu.addMenu('&Calibrate')
         self.show()
          
     def closeEvent(self, event):
@@ -34,6 +39,7 @@ class pyfabMainWindow(QtGui.QMainWindow):
                       QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
         if result == QtGui.QMessageBox.Yes:
             event.accept()
+            self.fabscreen.camera.close()
             self.sigClosed.emit()
         else:
             event.ignore()

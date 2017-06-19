@@ -13,6 +13,7 @@ class QSLM(QtGui.QLabel):
     def __init__(self, parent=None, **kwargs):
         super(QSLM, self).__init__(parent)
         desktop = QtGui.QDesktopWidget()
+        self.setWindowTitle('SLM')
         if desktop.numScreens() == 2:
             self.setWindowFlags(QtCore.Qt.FramelessWindowHint)            
             rect = desktop.screenGeometry(1)
