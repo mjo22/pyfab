@@ -3,6 +3,7 @@ from traps import QTrappingPattern
 from QFabGraphicsView import QFabGraphicsView
 from QSLM import QSLM
 from CGH import CGH
+from QCGH import QCGH
 import sys
         
 class pyfabMainWindow(QtGui.QMainWindow):
@@ -11,9 +12,9 @@ class pyfabMainWindow(QtGui.QMainWindow):
     
     def __init__(self):
         super(pyfabMainWindow, self).__init__()
-        self.setUpGui()
         self.setUpFab()
-    
+        self.setUpGui()
+        #self.a.show()
     def setUpFab(self):
         self.fabscreen = QFabGraphicsView(size=(640,480), gray=True, mirrored=False)
         self.setCentralWidget(self.fabscreen)
@@ -22,14 +23,30 @@ class pyfabMainWindow(QtGui.QMainWindow):
         self.slm.show()
         self.pattern.pipeline = CGH(self.slm)
         self.show()
+        self.cgh = QCGH()
     
     def setUpGui(self):
         #set geometry, window appearance
         self.setGeometry(640,480,960,720)
         self.setWindowTitle("Pyfab")
-        #set menu bar
+        #set menu bar and status bar
+        self.statusBar()
         mainMenu = self.menuBar()
-        mainMenu.addMenu('&Calibrate')
+        #QActions
+        exit = QtGui.QAction('&Exit', self)        
+        exit.setShortcut('Ctrl+Q')
+        exit.setStatusTip('Exit application')
+        exit.triggered.connect(self.close)
+        
+        cal = QtGui.QAction('&Calibrate',self)
+        cal.setShortcut('Ctrl+C')
+        cal.triggered.connect(self.cgh.show)
+        #Add QActions to menubar
+        mainMenu = self.menuBar()
+        file = mainMenu.addMenu('File')
+        file.addAction(exit)
+        mainMenu.addAction(cal)
+        
         self.show()
          
     def closeEvent(self, event):
@@ -39,7 +56,6 @@ class pyfabMainWindow(QtGui.QMainWindow):
                       QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
         if result == QtGui.QMessageBox.Yes:
             event.accept()
-            self.fabscreen.camera.close()
             self.sigClosed.emit()
         else:
             event.ignore()

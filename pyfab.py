@@ -18,6 +18,7 @@ class pyfab(QtGui.QApplication):
         self.exec_()
       
     def cleanup(self):
+        self.control.fabscreen.camera.close()
         self.closeAllWindows()
         self.exit()
         
