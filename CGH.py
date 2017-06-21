@@ -136,6 +136,7 @@ class CGH(object):
         self._theta = value
         self.updateTransformationMatrix()
         self.compute
+        print str(self._theta)
 
     def setData(self, trapdata):
         self.trapdata = trapdata
