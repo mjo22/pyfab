@@ -14,7 +14,7 @@ class pyfabMainWindow(QtGui.QMainWindow):
         super(pyfabMainWindow, self).__init__()
         self.setUpFab()
         self.setUpGui()
-        #self.a.show()
+     
     def setUpFab(self):
         self.fabscreen = QFabGraphicsView(size=(640,480), gray=True, mirrored=False)
         self.setCentralWidget(self.fabscreen)
@@ -59,6 +59,7 @@ class pyfabMainWindow(QtGui.QMainWindow):
             self.sigClosed.emit()
         else:
             event.ignore()
+            
         
 if __name__ == '__main__':
     main()   
