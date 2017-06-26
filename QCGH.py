@@ -22,10 +22,12 @@ class QCGH(QtGui.QTableWidget, CGH):
         self.setWindowTitle("Calibration")
         self.setColumnCount(1)
         self.setRowCount(9)
+        #define correspondence of a label to its row
+        self.labelToRow = {'qpp':0,'alpha':1,'theta':2,'rc xc':3, 'rc yc':4,'rc zc':5,'rs xc':6,'rs yc':7,'rs zc':8}
         #fill headers
+        labels = ('qpp','alpha','theta','rc xc', 'rc yc','rc zc','rs xc','rs yc','rs zc')
         self.setHorizontalHeaderItem(0,QtGui.QTableWidgetItem(QtCore.QString('')))
-        labels = ['qpp','alpha','theta','rc xc', 'rc yc','rc zc','rs xc','rs yc','rs zc']
-        for i in range(len(labels)):
+        for i in range(len(self.labelToRow.keys())):
             self.setVerticalHeaderItem(i,QtGui.QTableWidgetItem(QtCore.QString(labels[i])))
             
     def updateConstant(self):
@@ -44,30 +46,29 @@ class QCGH(QtGui.QTableWidget, CGH):
         #To do: 
         #1) bound each value
         #2) make code prettier
-        
         row = self.currentRow()
         try:
             inputFl = float(str(self.currentItem().text()))
         except:
             inputFl = 0.     
         try:
-            if row == 0:
+            if row == self.labelToRow['qpp']:
                 self.qpp = inputFl
-            elif row == 1:
+            elif row == self.labelToRow['alpha']:
                 self.alpha = inputFl
-            elif row == 2:
+            elif row == self.labelToRow['theta']:
                 self.theta = inputFl
-            elif row == 3:
+            elif row == self.labelToRow['rc xc']:
                 self.setX(self.rc,3,inputFl)
-            elif row == 4:
+            elif row == self.labelToRow['rc yc']:
                 self.setY(self.rc,4,inputFl)
-            elif row == 5:
+            elif row == self.labelToRow['rc zc']:
                 self.setZ(self.rc,5,inputFl)
-            elif row == 6:
+            elif row == self.labelToRow['rs xc']:
                 self.setX(self.rs,6,inputFl)
-            elif row == 7:
+            elif row == self.labelToRow['rs yc']:
                 self.setY(self.rs,7,inputFl)
-            elif row == 8:
+            elif row == self.labelToRow['rs zc']:
                 self.setZ(self.rs,8,inputFl)
         except Exception, e:
             print e
