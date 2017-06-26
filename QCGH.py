@@ -5,26 +5,30 @@ import sys
 class QCGH(QtGui.QTableWidget, CGH):
     def __init__(self):
         super(QCGH, self).__init__()
-        #appearance of QCGH
-        self.setGeometry(50,50,50,310)
-        self.setWindowTitle("Calibration")
-        self.setColumnCount(1)
-        self.setRowCount(9)
-        #fill labels
-        labels = [QtGui.QTableWidgetItem(QtCore.QString('qpp')),QtGui.QTableWidgetItem(QtCore.QString('alpha')),QtGui.QTableWidgetItem(QtCore.QString('theta')),QtGui.QTableWidgetItem(QtCore.QString('rc xc')),QtGui.QTableWidgetItem(QtCore.QString('rc yc')),QtGui.QTableWidgetItem(QtCore.QString('rc zc')),QtGui.QTableWidgetItem(QtCore.QString('rs xc')), QtGui.QTableWidgetItem(QtCore.QString('rs yc')), QtGui.QTableWidgetItem(QtCore.QString('rs zc'))]
-        for i in range(len(labels)):
-            self.setVerticalHeaderItem(i,labels[i])
-        self.setHorizontalHeaderItem(0,QtGui.QTableWidgetItem(QtCore.QString('')))
-        #initialize constants
+        self.setUpGui()
+        self.initializeConstants()
+        self.cellChanged.connect(self.updateConstant)
+        
+    def initializeConstants(self):
         self.theta = 0.
         self.alpha = 0.
         self.qpp = 0.
         self.rc = QtGui.QVector3D(0.,0.,0.)
         self.rs = QtGui.QVector3D(0.,0.,0.)
-        #catch signal if user changes signal
-        self.cellChanged.connect(self.updateCalConstant)
+        
+    def setUpGui(self):
+        #appearance of QCGH
+        self.setGeometry(50,50,50,310)
+        self.setWindowTitle("Calibration")
+        self.setColumnCount(1)
+        self.setRowCount(9)
+        #fill headers
+        self.setHorizontalHeaderItem(0,QtGui.QTableWidgetItem(QtCore.QString('')))
+        labels = ['qpp','alpha','theta','rc xc', 'rc yc','rc zc','rs xc','rs yc','rs zc']
+        for i in range(len(labels)):
+            self.setVerticalHeaderItem(i,QtGui.QTableWidgetItem(QtCore.QString(labels[i])))
             
-    def updateCalConstant(self):
+    def updateConstant(self):
         '''
         Call when user connects to cellChanged signal called by pyfabMainWindow
         
@@ -100,8 +104,8 @@ class QCGH(QtGui.QTableWidget, CGH):
         Used to just change the x value of a QVector3D. Call the setter to change all three 
         components at once.
         '''
+        vector.setZ(value)
         self.setWidgetValue(row,vector.z())
-        print vector
            
     @CGH.qpp.getter
     def qpp(self):

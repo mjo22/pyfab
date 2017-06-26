@@ -129,7 +129,6 @@ class CGH(object):
 
     @property
     def theta(self):
-        print 'CGH getter called'
         return self._theta
 
     @theta.setter
@@ -137,7 +136,6 @@ class CGH(object):
         self._theta = value
         self.updateTransformationMatrix()
         self.compute()
-        print 'CGH setter called'
 
     def setData(self, trapdata):
         self.trapdata = trapdata
