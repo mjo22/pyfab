@@ -3,10 +3,16 @@ from CGH import CGH
 import sys
 
 class QCGH(QtGui.QTableWidget, CGH):
+    
+    #bounds
+    max_dict = {'qpp':10,'alpha':360,'theta':360,'rc xc':10, 'rc yc':10,'rc zc':10,'rs xc':10,'rs yc':10,'rs zc':10}
+    min_dict = {'qpp':0,'alpha':0,'theta':0,'rc xc':0, 'rc yc':0,'rc zc':0,'rs xc':0,'rs yc':0,'rs zc':0}
+    #define correspondence of a label to its row
+    labelToRow = {'qpp':0,'alpha':1,'theta':2,'rc xc':3, 'rc yc':4,'rc zc':5,'rs xc':6,'rs yc':7,'rs zc':8}
+    
     def __init__(self):
         super(QCGH, self).__init__()
         self.setUpGui()
-        self.initializeConstants()
         self.cellChanged.connect(self.updateConstant)
         
     def initializeConstants(self):
@@ -22,13 +28,13 @@ class QCGH(QtGui.QTableWidget, CGH):
         self.setWindowTitle("Calibration")
         self.setColumnCount(1)
         self.setRowCount(9)
-        #define correspondence of a label to its row
-        self.labelToRow = {'qpp':0,'alpha':1,'theta':2,'rc xc':3, 'rc yc':4,'rc zc':5,'rs xc':6,'rs yc':7,'rs zc':8}
         #fill headers
         labels = ('qpp','alpha','theta','rc xc', 'rc yc','rc zc','rs xc','rs yc','rs zc')
         self.setHorizontalHeaderItem(0,QtGui.QTableWidgetItem(QtCore.QString('')))
         for i in range(len(self.labelToRow.keys())):
             self.setVerticalHeaderItem(i,QtGui.QTableWidgetItem(QtCore.QString(labels[i])))
+        #initialize constants after setting up GUI so they're put into table
+        self.initializeConstants()
             
     def updateConstant(self):
         '''
@@ -59,17 +65,17 @@ class QCGH(QtGui.QTableWidget, CGH):
             elif row == self.labelToRow['theta']:
                 self.theta = inputFl
             elif row == self.labelToRow['rc xc']:
-                self.setX(self.rc,3,inputFl)
+                self.setX(self.rc,row,inputFl,'rc xc')
             elif row == self.labelToRow['rc yc']:
-                self.setY(self.rc,4,inputFl)
+                self.setY(self.rc,row,inputFl,'rc yc')
             elif row == self.labelToRow['rc zc']:
-                self.setZ(self.rc,5,inputFl)
+                self.setZ(self.rc,row,inputFl,'rc zc')
             elif row == self.labelToRow['rs xc']:
-                self.setX(self.rs,6,inputFl)
+                self.setX(self.rs,row,inputFl,'rs xc')
             elif row == self.labelToRow['rs yc']:
-                self.setY(self.rs,7,inputFl)
+                self.setY(self.rs,row,inputFl,'rs yc')
             elif row == self.labelToRow['rs zc']:
-                self.setZ(self.rs,8,inputFl)
+                self.setZ(self.rs,row,inputFl,'rs zc')
         except Exception, e:
             print e
     
@@ -86,27 +92,33 @@ class QCGH(QtGui.QTableWidget, CGH):
         self.setItem(row,0,self.floatToWidgetItem(value))
         self.blockSignals(False)
         
-    def setX(self,vector,row,value):
+    def setX(self,vector,row,value,key):
         '''
         Used to just change the x value of a QVector3D. Call the setter to change all three 
         components at once.
         '''
+        value = self.clamp(value, self.min_dict[key], self.max_dict[key])
         vector.setX(value)
         self.setWidgetValue(row,vector.x())
-    def setY(self,vector,row,value):
+    def setY(self,vector,row,value,key):
         '''
         Used to just change the x value of a QVector3D. Call the setter to change all three 
         components at once.
         '''
+        value = self.clamp(value, self.min_dict[key], self.max_dict[key])
         vector.setY(value)
         self.setWidgetValue(row,vector.y())
-    def setZ(self,vector,row,value):
+    def setZ(self,vector,row,value,key):
         '''
         Used to just change the x value of a QVector3D. Call the setter to change all three 
         components at once.
         '''
+        value = self.clamp(value, self.min_dict[key], self.max_dict[key])
         vector.setZ(value)
         self.setWidgetValue(row,vector.z())
+        
+    def clamp(self, n, mini, maxi):
+        return max(min(n, maxi), mini)    
            
     @CGH.qpp.getter
     def qpp(self):
@@ -114,8 +126,9 @@ class QCGH(QtGui.QTableWidget, CGH):
     
     @qpp.setter
     def qpp(self, value):
+        value = self.clamp(value, self.min_dict['qpp'], self.max_dict['qpp'])
         self._qpp = value
-        self.setWidgetValue(0,value)
+        self.setWidgetValue(self.labelToRow['qpp'],value)
         
     @CGH.alpha.getter
     def alpha(self):
@@ -123,8 +136,9 @@ class QCGH(QtGui.QTableWidget, CGH):
     
     @alpha.setter
     def alpha(self, value):
+        value = self.clamp(value, self.min_dict['alpha'], self.max_dict['alpha'])
         self._alpha = value
-        self.setWidgetValue(1,value)
+        self.setWidgetValue(self.labelToRow['alpha'],value)
         
     @CGH.theta.getter
     def theta(self):
@@ -132,8 +146,9 @@ class QCGH(QtGui.QTableWidget, CGH):
     
     @theta.setter
     def theta(self, value):
+        value = self.clamp(value, self.min_dict['theta'], self.max_dict['theta'])
         self._theta = value
-        self.setWidgetValue(2,value)
+        self.setWidgetValue(self.labelToRow['theta'],value)
     
     @CGH.rc.getter
     def rc(self):
@@ -141,10 +156,13 @@ class QCGH(QtGui.QTableWidget, CGH):
     
     @rc.setter
     def rc(self, value):
+        value.setX(self.clamp(value, self.min_dict['rc xc'], self.max_dict['rc xc']))
+        value.setY(self.clamp(value, self.min_dict['rc yc'], self.max_dict['rc yc']))
+        value.setZ(self.clamp(value, self.min_dict['rc zc'], self.max_dict['rc zc']))
         self._rc = value 
-        self.setWidgetValue(3,self._rc.x())
-        self.setWidgetValue(4,self._rc.y())
-        self.setWidgetValue(5,self._rc.z())
+        self.setWidgetValue(self.labelToRow['rc xc'],self._rc.x())
+        self.setWidgetValue(self.labelToRow['rc yc'],self._rc.y())
+        self.setWidgetValue(self.labelToRow['rc zc'],self._rc.z())
     
     @CGH.rs.getter
     def rs(self):
@@ -152,10 +170,13 @@ class QCGH(QtGui.QTableWidget, CGH):
     
     @rs.setter
     def rs(self, value):
+        value.setX(self.clamp(value, self.min_dict['rs xc'], self.max_dict['rs xc']))
+        value.setY(self.clamp(value, self.min_dict['rs yc'], self.max_dict['rs yc']))
+        value.setZ(self.clamp(value, self.min_dict['rs zc'], self.max_dict['rs zc']))
         self._rs = value
-        self.setWidgetValue(6,self._rs.x())
-        self.setWidgetValue(7,self._rs.y())
-        self.setWidgetValue(8,self._rs.z())
+        self.setWidgetValue(self.labelToRow['rs xc'],self._rs.x())
+        self.setWidgetValue(self.labelToRow['rs yc'],self._rs.y())
+        self.setWidgetValue(self.labelToRow['rs zc'],self._rs.z())
              
 if __name__ == '__main__':
     import sys
