@@ -25,11 +25,6 @@ class pyfabMainWindow(QtGui.QMainWindow):
         self.show()
         
     def setUpGui(self):
-        '''
-        To set up GUI: create a QHBoxLayout object and add to it a QTabWidget and Fabscreen. Change dimensions to make this work. Then make 
-        the BoxLayout the central widget of the QMainWindow. Add calibration as a tab. Then have a dot menu where you have the option to 
-        calibrate as sliders or as the QTableView.
-        '''
         #set geometry, window appearance
         self.setGeometry(640,480,1440,720)
         self.setWindowTitle("Pyfab")
@@ -44,16 +39,13 @@ class pyfabMainWindow(QtGui.QMainWindow):
         #create layout
         self.layout.addWidget(self.fabscreen)
         self.layout.addWidget(self.tabs)
-        
-        self.layout.setStretch(0,1)
+        #set proportionality of fabscreen vs tabs
+        self.layout.setStretch(0,2)
         self.layout.setStretch(1,1)
-        
         #implement layout
         self.window.setLayout(self.layout)
         self.setCentralWidget(self.window)
-        
-        
-        
+
         #QActions
         exit = QtGui.QAction('&Exit', self)        
         exit.setShortcut('Ctrl+Q')
