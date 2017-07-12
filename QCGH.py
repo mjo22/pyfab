@@ -69,17 +69,17 @@ class QCGH(QtGui.QTableWidget, CGH):
             elif row == self.labelToRow['theta']:
                 self.theta = inputFl
             elif row == self.labelToRow['rc xc']:
-                self.setX(self.rc,row,inputFl,'rc xc')
+                self.setX(self.rc,inputFl,'rc xc')
             elif row == self.labelToRow['rc yc']:
-                self.setY(self.rc,row,inputFl,'rc yc')
+                self.setY(self.rc,inputFl,'rc yc')
             elif row == self.labelToRow['rc zc']:
-                self.setZ(self.rc,row,inputFl,'rc zc')
+                self.setZ(self.rc,inputFl,'rc zc')
             elif row == self.labelToRow['rs xc']:
-                self.setX(self.rs,row,inputFl,'rs xc')
+                self.setX(self.rs,inputFl,'rs xc')
             elif row == self.labelToRow['rs yc']:
-                self.setY(self.rs,row,inputFl,'rs yc')
+                self.setY(self.rs,inputFl,'rs yc')
             elif row == self.labelToRow['rs zc']:
-                self.setZ(self.rs,row,inputFl,'rs zc')
+                self.setZ(self.rs,inputFl,'rs zc')
         except Exception, e:
             print e
     
@@ -87,39 +87,39 @@ class QCGH(QtGui.QTableWidget, CGH):
         fl = '{0:.2f}'.format(fl)
         return QtGui.QTableWidgetItem(QtCore.QString(fl))
     
-    def setWidgetValue(self,row,value):
+    def setWidgetValue(self,key,value):
         '''
         When setting an item to the table, the cellChanged signal must be blocked or else 
         the system will catch it and enter an infinite loop
         '''
         self.blockSignals(True)
-        self.setItem(row,0,self.floatToWidgetItem(value))
+        self.setItem(self.labelToRow[key],0,self.floatToWidgetItem(value))
         self.blockSignals(False)
         
-    def setX(self,vector,row,value,key):
+    def setX(self,vector,value,key):
         '''
         Used to just change the x value of a QVector3D. Call the setter to change all three 
         components at once.
         '''
         value = self.clamp(value, self.min_dict[key], self.max_dict[key])
         vector.setX(value)
-        self.setWidgetValue(row,vector.x())
-    def setY(self,vector,row,value,key):
+        self.setWidgetValue(key,vector.x())
+    def setY(self,vector,value,key):
         '''
         Used to just change the x value of a QVector3D. Call the setter to change all three 
         components at once.
         '''
         value = self.clamp(value, self.min_dict[key], self.max_dict[key])
         vector.setY(value)
-        self.setWidgetValue(row,vector.y())
-    def setZ(self,vector,row,value,key):
+        self.setWidgetValue(key,vector.y())
+    def setZ(self,vector,value,key):
         '''
         Used to just change the x value of a QVector3D. Call the setter to change all three 
         components at once.
         '''
         value = self.clamp(value, self.min_dict[key], self.max_dict[key])
         vector.setZ(value)
-        self.setWidgetValue(row,vector.z())
+        self.setWidgetValue(key,vector.z())
         
     def clamp(self, n, mini, maxi):
         return max(min(n, maxi), mini)    
@@ -132,7 +132,7 @@ class QCGH(QtGui.QTableWidget, CGH):
     def qpp(self, value):
         value = self.clamp(value, self.min_dict['qpp'], self.max_dict['qpp'])
         self._qpp = value
-        self.setWidgetValue(self.labelToRow['qpp'],value)
+        self.setWidgetValue('qpp',value)
         
     @CGH.alpha.getter
     def alpha(self):
@@ -142,7 +142,7 @@ class QCGH(QtGui.QTableWidget, CGH):
     def alpha(self, value):
         value = self.clamp(value, self.min_dict['alpha'], self.max_dict['alpha'])
         self._alpha = value
-        self.setWidgetValue(self.labelToRow['alpha'],value)
+        self.setWidgetValue('alpha',value)
         
     @CGH.theta.getter
     def theta(self):
@@ -152,35 +152,32 @@ class QCGH(QtGui.QTableWidget, CGH):
     def theta(self, value):
         value = self.clamp(value, self.min_dict['theta'], self.max_dict['theta'])
         self._theta = value
-        self.setWidgetValue(self.labelToRow['theta'],value)
+        self.setWidgetValue('theta',value)
     
     @CGH.rc.getter
     def rc(self):
         return self._rc
     
     @rc.setter
-    def rc(self, value):
-        value.setX(self.clamp(value, self.min_dict['rc xc'], self.max_dict['rc xc']))
-        value.setY(self.clamp(value, self.min_dict['rc yc'], self.max_dict['rc yc']))
-        value.setZ(self.clamp(value, self.min_dict['rc zc'], self.max_dict['rc zc']))
-        self._rc = value 
-        self.setWidgetValue(self.labelToRow['rc xc'],self._rc.x())
-        self.setWidgetValue(self.labelToRow['rc yc'],self._rc.y())
-        self.setWidgetValue(self.labelToRow['rc zc'],self._rc.z())
+    def rc(self, vector):
+        self.setX(vector, self.clamp(vector.x(), self.min_dict['rc xc'], self.max_dict['rc xc']), 'rc xc')
+        self.setY(vector, self.clamp(vector.y(), self.min_dict['rc yc'], self.max_dict['rc yc']), 'rc yc')
+        self.setZ(vector, self.clamp(vector.z(), self.min_dict['rc zc'], self.max_dict['rc zc']), 'rc zc')
+        self._rc = vector 
+        #self.setWidgetValue(self.labelToRow['rc xc'],self._rc.x())
+        #self.setWidgetValue(self.labelToRow['rc yc'],self._rc.y())
+        #self.setWidgetValue(self.labelToRow['rc zc'],self._rc.z())
     
     @CGH.rs.getter
     def rs(self):
         return self._rs
     
     @rs.setter
-    def rs(self, value):
-        value.setX(self.clamp(value, self.min_dict['rs xc'], self.max_dict['rs xc']))
-        value.setY(self.clamp(value, self.min_dict['rs yc'], self.max_dict['rs yc']))
-        value.setZ(self.clamp(value, self.min_dict['rs zc'], self.max_dict['rs zc']))
-        self._rs = value
-        self.setWidgetValue(self.labelToRow['rs xc'],self._rs.x())
-        self.setWidgetValue(self.labelToRow['rs yc'],self._rs.y())
-        self.setWidgetValue(self.labelToRow['rs zc'],self._rs.z())
+    def rs(self, vector):
+        self.setX(vector, self.clamp(vector.x(), self.min_dict['rs xc'], self.max_dict['rs xc']), 'rs xc')
+        self.setY(vector, self.clamp(vector.y(), self.min_dict['rs yc'], self.max_dict['rs yc']), 'rs yc')
+        self.setZ(vector, self.clamp(vector.z(), self.min_dict['rs zc'], self.max_dict['rs zc']), 'rs zc')
+        self._rs = vector 
              
 if __name__ == '__main__':
     import sys
