@@ -4,6 +4,16 @@ import sys
 
 class QCGH(QtGui.QTableWidget, CGH):
     
+    '''
+    A GUI to set calibration constants. 
+    To set:
+        From the program- 
+            Use the table in the "Calibration" tab.
+        From the terminal-
+            For values simply use the setters of the constant. 
+            For vectors, either use setX, setY, setZ as written in this QCGH class, or call a setter and set equal to a QtGui.QVector3D() 
+            object.
+    '''
     #bounds
     max_dict = {'qpp':10,'alpha':360,'theta':360,'rc xc':10, 'rc yc':10,'rc zc':10,'rs xc':10,'rs yc':10,'rs zc':10}
     min_dict = {'qpp':0,'alpha':0,'theta':0,'rc xc':0, 'rc yc':0,'rc zc':0,'rs xc':0,'rs yc':0,'rs zc':0}
@@ -43,19 +53,7 @@ class QCGH(QtGui.QTableWidget, CGH):
     def updateConstant(self):
         '''
         Call when user connects to cellChanged signal called by pyfabMainWindow
-        
-        To improve: 
-        1) Eliminate row dependence. The connection to each constant depends on the row 
-        that the cell is in
-        2) Fix hard coding of using conditionals for each row. The complication lies 
-        with the setters--if you store them in a list/dictionary/tuple you can't set them 
-        to a new value by accessing the item and you can't call it as a function from the 
-        list/dictionary/tuple
         '''
-        #idea: dict linking getters and widget items? could easily b done
-        #To do: 
-        #1) bound each value
-        #2) make code prettier
         row = self.currentRow()
         try:
             inputFl = float(str(self.currentItem().text()))
@@ -164,9 +162,6 @@ class QCGH(QtGui.QTableWidget, CGH):
         self.setY(vector, self.clamp(vector.y(), self.min_dict['rc yc'], self.max_dict['rc yc']), 'rc yc')
         self.setZ(vector, self.clamp(vector.z(), self.min_dict['rc zc'], self.max_dict['rc zc']), 'rc zc')
         self._rc = vector 
-        #self.setWidgetValue(self.labelToRow['rc xc'],self._rc.x())
-        #self.setWidgetValue(self.labelToRow['rc yc'],self._rc.y())
-        #self.setWidgetValue(self.labelToRow['rc zc'],self._rc.z())
     
     @CGH.rs.getter
     def rs(self):

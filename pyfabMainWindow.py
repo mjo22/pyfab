@@ -51,12 +51,6 @@ class pyfabMainWindow(QtGui.QMainWindow):
         exit.setShortcut('Ctrl+Q')
         exit.setStatusTip('Exit application')
         exit.triggered.connect(self.close)
-        '''
-        cal = QtGui.QAction('&Calibrate',self)
-        cal.setShortcut('Ctrl+C')
-        cal.triggered.connect(self.cgh.show)
-        mainMenu.addAction(cal)
-        '''
         #Add QActions to menubar
         mainMenu = self.menuBar()
         file = mainMenu.addMenu('File')
