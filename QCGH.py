@@ -39,21 +39,7 @@ class QCGH(QtGui.QTableWidget, CGH):
             self.setVerticalHeaderItem(i,QtGui.QTableWidgetItem(QtCore.QString(labels[i])))
         #initialize constants after setting up GUI so they're put into table
         self.initializeConstants()
-    '''    
-    try this: https://stackoverflow.com/questions/452333/how-to-maintain-widgets-aspect-ratio-in-qt
-    def resizeEvent(self,event):
-        if self.size().height() / self.size().width() != self.h_to_w:
-            print 'nay!'
-            self.blockSignals(True)
-            w = event.oldSize().width() + 1
-            h = event.oldSize().height() + 6
-            self.setGeometry(self.pos().x(), self.pos().y(), w, h)
-            self.blockSignals(False)
-        else:
-            print 'perf!'
-    '''
-            
-            
+                        
     def updateConstant(self):
         '''
         Call when user connects to cellChanged signal called by pyfabMainWindow
