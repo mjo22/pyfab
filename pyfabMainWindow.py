@@ -59,7 +59,7 @@ class pyfabMainWindow(QtGui.QMainWindow):
         saveCalibration = QtGui.QAction('&Save calibration', self)
         saveCalibration.setShortcut('Ctrl+S')
         saveCalibration.setStatusTip('Save calibration constants')
-        saveCalibration.triggered.connect(self.cgh.writeData)
+        saveCalibration.triggered.connect(self.cgh.saveData)
         #Add QActions to menubar
         mainMenu = self.menuBar()
         file = mainMenu.addMenu('File')
@@ -74,7 +74,13 @@ class pyfabMainWindow(QtGui.QMainWindow):
                       "Are you sure you want to quit?",
                       QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
         if result == QtGui.QMessageBox.Yes:
-            self.cgh.writeData()
+            if self.cgh.constantsSaved == False:
+                savePrompt = QtGui.QMessageBox.question(self,
+                      "Save calibration constants",
+                      "Do you want to save your calibration?",
+                      QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+                if savePrompt == QtGui.QMessageBox.Yes:
+                    self.cgh.saveData()
             event.accept()
             self.sigClosed.emit()
         else:

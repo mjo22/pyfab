@@ -36,12 +36,14 @@ class QCGH(QtGui.QTableWidget, CGH):
         self.qpp = data['qpp']
         self.rc = QtGui.QVector3D(data['rc xc'],data['rc yc'],data['rc zc'])
         self.rs = QtGui.QVector3D(data['rs xc'],data['rs yc'],data['rs zc'])
+        self.constantsSaved = True
         
-    def writeData(self):
+    def saveData(self):
         data = {'qpp': self.qpp, 'alpha': self.alpha, 'theta': self.theta, 'rc xc': self.rc.x(), 'rc yc': self.rc.y(), 'rc zc': self.rc.z(), 'rs xc': self.rs.x(), 'rs yc': self.rs.y(), 'rs zc': self.rs.z()}
         s = json.dumps(data)
         with open("json/calibration.txt", "w") as f:
             f.write(s)
+        self.constantsSaved = True        
             
     def getData(self):
         f = open("json/calibration.txt", "r")
@@ -106,6 +108,7 @@ class QCGH(QtGui.QTableWidget, CGH):
         self.blockSignals(True)
         self.setItem(self.labelToRow[key],0,self.floatToWidgetItem(value))
         self.blockSignals(False)
+        self.constantsSaved = False
         
     def setX(self,vector,value,key):
         '''
@@ -115,6 +118,7 @@ class QCGH(QtGui.QTableWidget, CGH):
         value = self.clamp(value, self.min_dict[key], self.max_dict[key])
         vector.setX(value)
         self.setWidgetValue(key,vector.x())
+        
     def setY(self,vector,value,key):
         '''
         Used to just change the x value of a QVector3D. Call the setter to change all three 
@@ -123,6 +127,7 @@ class QCGH(QtGui.QTableWidget, CGH):
         value = self.clamp(value, self.min_dict[key], self.max_dict[key])
         vector.setY(value)
         self.setWidgetValue(key,vector.y())
+        
     def setZ(self,vector,value,key):
         '''
         Used to just change the x value of a QVector3D. Call the setter to change all three 
@@ -175,6 +180,7 @@ class QCGH(QtGui.QTableWidget, CGH):
         self.setY(vector, self.clamp(vector.y(), self.min_dict['rc yc'], self.max_dict['rc yc']), 'rc yc')
         self.setZ(vector, self.clamp(vector.z(), self.min_dict['rc zc'], self.max_dict['rc zc']), 'rc zc')
         self._rc = vector
+        self.constantsSaved = False
     
     @CGH.rs.getter
     def rs(self):
@@ -185,7 +191,8 @@ class QCGH(QtGui.QTableWidget, CGH):
         self.setX(vector, self.clamp(vector.x(), self.min_dict['rs xc'], self.max_dict['rs xc']), 'rs xc')
         self.setY(vector, self.clamp(vector.y(), self.min_dict['rs yc'], self.max_dict['rs yc']), 'rs yc')
         self.setZ(vector, self.clamp(vector.z(), self.min_dict['rs zc'], self.max_dict['rs zc']), 'rs zc')
-        self._rs = vector 
+        self._rs = vector
+        self.constantsSaved = False
              
 if __name__ == '__main__':
     import sys
