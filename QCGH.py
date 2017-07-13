@@ -30,21 +30,34 @@ class QCGH(QtGui.QTableWidget, CGH):
         '''
         Loads last saved data and initializes constants as such
         '''
-        data = self.getData()
-        self.theta = data['theta']
-        self.alpha = data['alpha']
-        self.qpp = data['qpp']
-        self.rc = QtGui.QVector3D(data['rc xc'],data['rc yc'],data['rc zc'])
-        self.rs = QtGui.QVector3D(data['rs xc'],data['rs yc'],data['rs zc'])
+        self.lastSaved = self.getData()
+        self.theta = self.lastSaved['theta']
+        self.alpha = self.lastSaved['alpha']
+        self.qpp = self.lastSaved['qpp']
+        self.rc = QtGui.QVector3D(self.lastSaved['rc xc'],self.lastSaved['rc yc'],self.lastSaved['rc zc'])
+        self.rs = QtGui.QVector3D(self.lastSaved['rs xc'],self.lastSaved['rs yc'],self.lastSaved['rs zc'])
         self.constantsSaved = True
         
     def saveData(self):
+        self.lastSaved = self.getData()
         data = {'qpp': self.qpp, 'alpha': self.alpha, 'theta': self.theta, 'rc xc': self.rc.x(), 'rc yc': self.rc.y(), 'rc zc': self.rc.z(), 'rs xc': self.rs.x(), 'rs yc': self.rs.y(), 'rs zc': self.rs.z()}
         s = json.dumps(data)
         with open("json/calibration.txt", "w") as f:
             f.write(s)
-        self.constantsSaved = True        
-            
+        self.constantsSaved = True
+        
+    def restoreData(self):
+        restore = QtGui.QMessageBox.question(self,
+                      "Restore Calibration Settings",
+                      "Are you sure you want to restore? Current settings will be lost.",
+                      QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+        if restore == QtGui.QMessageBox.Yes:
+            s = json.dumps(self.lastSaved)
+            with open("json/calibration.txt", "w") as f:
+                f.write(s)
+            self.constantsSaved = True
+            self.initializeConstants()
+    
     def getData(self):
         f = open("json/calibration.txt", "r")
         s = f.read()

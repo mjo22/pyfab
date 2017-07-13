@@ -56,15 +56,21 @@ class pyfabMainWindow(QtGui.QMainWindow):
         exit.setShortcut('Ctrl+Q')
         exit.setStatusTip('Exit application')
         exit.triggered.connect(self.close)
-        saveCalibration = QtGui.QAction('&Save calibration', self)
+        saveCalibration = QtGui.QAction('&Save', self)
         saveCalibration.setShortcut('Ctrl+S')
-        saveCalibration.setStatusTip('Save calibration constants')
+        saveCalibration.setStatusTip('Save calibration settings')
         saveCalibration.triggered.connect(self.cgh.saveData)
+        restoreCalibration = QtGui.QAction('&Restore', self)
+        restoreCalibration.setShortcut('Ctrl+R')
+        restoreCalibration.setStatusTip('Restore calibration settings')
+        restoreCalibration.triggered.connect(self.cgh.restoreData)
+        
         #Add QActions to menubar
         mainMenu = self.menuBar()
         file = mainMenu.addMenu('File')
         file.addAction(exit)
         file.addAction(saveCalibration)
+        file.addAction(restoreCalibration)
         
         self.show()
          
@@ -93,5 +99,5 @@ if __name__ == '__main__':
 def main():
     import sys
     app = QtGui.QApplication(sys.argv)
-    controller = pyfabController()
+    mainWindow = pyfabMainWindow()
     sys.exit(app.exec_())
