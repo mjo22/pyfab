@@ -1,6 +1,7 @@
 from PyQt4 import QtGui, QtCore
 from CGH import CGH
 import sys
+import json
 
 class QCGH(QtGui.QTableWidget, CGH):
     
@@ -26,19 +27,31 @@ class QCGH(QtGui.QTableWidget, CGH):
         self.cellChanged.connect(self.updateConstant)
         
     def initializeConstants(self):
-        self.theta = 0.
-        self.alpha = 0.
-        self.qpp = 0.
-        self.rc = QtGui.QVector3D(0.,0.,0.)
-        self.rs = QtGui.QVector3D(0.,0.,0.)
+        '''
+        Loads last saved data and initializes constants as such
+        '''
+        data = self.getData()
+        self.theta = data['theta']
+        self.alpha = data['alpha']
+        self.qpp = data['qpp']
+        self.rc = QtGui.QVector3D(data['rc xc'],data['rc yc'],data['rc zc'])
+        self.rs = QtGui.QVector3D(data['rs xc'],data['rs yc'],data['rs zc'])
+        
+    def writeData(self):
+        data = {'qpp': self.qpp, 'alpha': self.alpha, 'theta': self.theta, 'rc xc': self.rc.x(), 'rc yc': self.rc.y(), 'rc zc': self.rc.z(), 'rs xc': self.rs.x(), 'rs yc': self.rs.y(), 'rs zc': self.rs.z()}
+        s = json.dumps(data)
+        with open("json/calibration.txt", "w") as f:
+            f.write(s)
+            
+    def getData(self):
+        f = open("json/calibration.txt", "r")
+        s = f.read()
+        data = json.loads(s)
+        return data
         
     def setUpGui(self):
         #appearance of QCGH
-        self.setGeometry(200,200,50,300)
-        self.aspectRatio = self.size().height() / self.size().width()
-        self.setBaseSize(self.size())
-        self.setSizeIncrement(1, self.aspectRatio)
-        self.setMinimumSize(self.size())
+        self.setGeometry(0,0,50,300)
         self.setWindowTitle("Calibration")
         self.setColumnCount(1)
         self.setRowCount(9)
@@ -161,7 +174,7 @@ class QCGH(QtGui.QTableWidget, CGH):
         self.setX(vector, self.clamp(vector.x(), self.min_dict['rc xc'], self.max_dict['rc xc']), 'rc xc')
         self.setY(vector, self.clamp(vector.y(), self.min_dict['rc yc'], self.max_dict['rc yc']), 'rc yc')
         self.setZ(vector, self.clamp(vector.z(), self.min_dict['rc zc'], self.max_dict['rc zc']), 'rc zc')
-        self._rc = vector 
+        self._rc = vector
     
     @CGH.rs.getter
     def rs(self):

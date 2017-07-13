@@ -1,1 +1,1 @@
-
+{"rs xc": 0.0, "rc zc": 5.0, "rs yc": 10.0, "theta": 2.0, "rc xc": 0.0, "alpha": 0.0, "qpp": 1.0, "rc yc": 0.0, "rs zc": 0.0}

@@ -5,6 +5,7 @@ from QSLM import QSLM
 from CGH import CGH
 from QCGH import QCGH
 import sys
+import json
         
 class pyfabMainWindow(QtGui.QMainWindow):
     
@@ -26,7 +27,11 @@ class pyfabMainWindow(QtGui.QMainWindow):
         
     def setUpGui(self):
         #set geometry, window appearance
-        self.setGeometry(640,480,1440,720)
+        self.setGeometry(200,250,1440,720)
+        self.aspectRatio = self.size().height() / self.size().width()
+        self.setBaseSize(self.size())
+        self.setSizeIncrement(1, self.aspectRatio)
+        self.setMinimumSize(self.size())
         self.setWindowTitle("Pyfab")
         self.setWindowIcon(QtGui.QIcon('icon/pyqtlogo.png'))
         
@@ -51,10 +56,15 @@ class pyfabMainWindow(QtGui.QMainWindow):
         exit.setShortcut('Ctrl+Q')
         exit.setStatusTip('Exit application')
         exit.triggered.connect(self.close)
+        saveCalibration = QtGui.QAction('&Save calibration', self)
+        saveCalibration.setShortcut('Ctrl+S')
+        saveCalibration.setStatusTip('Save calibration constants')
+        saveCalibration.triggered.connect(self.cgh.writeData)
         #Add QActions to menubar
         mainMenu = self.menuBar()
         file = mainMenu.addMenu('File')
         file.addAction(exit)
+        file.addAction(saveCalibration)
         
         self.show()
          
@@ -64,6 +74,7 @@ class pyfabMainWindow(QtGui.QMainWindow):
                       "Are you sure you want to quit?",
                       QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
         if result == QtGui.QMessageBox.Yes:
+            self.cgh.writeData()
             event.accept()
             self.sigClosed.emit()
         else:
