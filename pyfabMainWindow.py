@@ -32,6 +32,7 @@ class pyfabMainWindow(QtGui.QMainWindow):
         self.setBaseSize(self.size())
         self.setSizeIncrement(1, self.aspectRatio)
         self.setMinimumSize(self.size())
+        self.setMaximumSize(QtCore.QSize(1920,960))
         self.setWindowTitle("Pyfab")
         self.setWindowIcon(QtGui.QIcon('icon/pyqtlogo.png'))
         
