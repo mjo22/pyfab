@@ -4,9 +4,9 @@
 
 import numpy as np
 import pyqtgraph as pg
-from pyqtgraph.Qt import QtCore, QtGui
+from pyqtgraph.Qt import QtCore, QtGui, QtWidgets
 from QCameraItem import QCameraItem
-from PyQt4.QtCore import Qt
+from PyQt5.QtCore import Qt
 
 
 class QFabGraphicsView(pg.GraphicsLayoutWidget):
@@ -153,9 +153,8 @@ class demopattern(object):
 
 def main():
     import sys
-    from pyqtgraph.Qt import QtGui
-
-    app = QtGui.QApplication(sys.argv)
+    
+    app = QtWidgets.QApplication(sys.argv)
 
     fabscreen = QFabGraphicsView(size=(640, 480), gray=True)
     fabscreen.show()

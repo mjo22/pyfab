@@ -2,8 +2,8 @@
 
 """QTrappingPattern.py: Interface between QFabScreen and QSLM."""
 
-from PyQt4 import QtGui
-from PyQt4.QtCore import Qt, QPoint, QRect, QRectF, QSize
+from PyQt5 import QtGui
+from PyQt5.QtCore import Qt, QPoint, QRect, QRectF, QSize
 from QTrap import QTrap
 from QTrapGroup import QTrapGroup
 from states import states

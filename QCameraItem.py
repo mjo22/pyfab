@@ -4,7 +4,7 @@
 
 import cv2
 import pyqtgraph as pg
-from PyQt4.QtCore import QObject, QThread, QPoint, QRectF, QSizeF, QTimer, Qt
+from PyQt5.QtCore import QObject, QThread, QPoint, QRectF, QSizeF, QTimer, Qt
 
 
 def is_cv2():
@@ -253,7 +253,7 @@ class QCameraWidget(pg.PlotWidget):
 
 def main():
     import sys
-    from PyQt4.QtGui import QApplication
+    from PyQt4.QtWidgets import QApplication
 
     app = QApplication(sys.argv)
     device = QCameraDevice(gray=True, size=(640, 480))

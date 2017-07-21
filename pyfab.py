@@ -2,11 +2,11 @@
 
 """pyfab.py: GUI for holographic optical trapping."""
 
-from pyqtgraph.Qt import QtGui
+from pyqtgraph.Qt import QtWidgets
 from pyfabMainWindow import pyfabMainWindow
 import sys
 
-class pyfab(QtGui.QApplication):
+class pyfab(QtWidgets.QApplication):
 
     def __init__(self, parent=None): 
         super(pyfab, self).__init__(sys.argv)

@@ -1,9 +1,9 @@
-from PyQt4 import QtGui, QtCore
+from PyQt5 import QtGui, QtCore, QtWidgets
 from CGH import CGH
 import sys
 import json
 
-class QCGH(QtGui.QTableWidget, CGH):
+class QCGH(QtWidgets.QTableWidget, CGH):
     
     '''
     A GUI to set calibration constants. 
@@ -12,8 +12,7 @@ class QCGH(QtGui.QTableWidget, CGH):
             Use the table in the "Calibration" tab.
         From the terminal-
             For values simply use the setters of the constant. 
-            For vectors, either use setX, setY, setZ as written in this QCGH class, or call a setter and set equal to a QtGui.QVector3D() 
-            object.
+            For vectors, either use setX, setY, setZ as written in this QCGH class, or call setter and set equal to a QtGui.QVector3D(x, y, z) object.
     '''
     #bounds
     max_dict = {'qpp':10,'alpha':360,'theta':360,'rc xc':10, 'rc yc':10,'rc zc':10,'rs xc':10,'rs yc':10,'rs zc':10}
@@ -21,10 +20,24 @@ class QCGH(QtGui.QTableWidget, CGH):
     #define correspondence of a label to its row
     labelToRow = {'qpp':0,'alpha':1,'theta':2,'rc xc':3, 'rc yc':4,'rc zc':5,'rs xc':6,'rs yc':7,'rs zc':8}
     
-    def __init__(self):
-        super(QCGH, self).__init__()
+    def __init__(self, slm):
+        super(QCGH, self).__init__(slm=slm)
         self.setUpGui()
         self.cellChanged.connect(self.updateConstant)
+        
+    def setUpGui(self):
+        #appearance of QCGH
+        self.setGeometry(0,0,50,300)
+        self.setWindowTitle("Calibration")
+        self.setColumnCount(1)
+        self.setRowCount(9)
+        #fill headers
+        labels = ('qpp','alpha','theta','rc xc', 'rc yc','rc zc','rs xc','rs yc','rs zc')
+        self.setHorizontalHeaderItem(0,QtWidgets.QTableWidgetItem(''))
+        for i in range(len(self.labelToRow.keys())):
+            self.setVerticalHeaderItem(i,QtWidgets.QTableWidgetItem(labels[i]))
+        #initialize constants after setting up GUI so they're put into table
+        self.initializeConstants()
         
     def initializeConstants(self):
         '''
@@ -47,11 +60,11 @@ class QCGH(QtGui.QTableWidget, CGH):
         self.constantsSaved = True
         
     def restoreData(self):
-        restore = QtGui.QMessageBox.question(self,
+        restore = QtWidgets.QMessageBox.question(self,
                       "Restore Calibration Settings",
                       "Are you sure you want to restore? Current settings will be lost.",
-                      QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
-        if restore == QtGui.QMessageBox.Yes:
+                      QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+        if restore == QtWidgets.QMessageBox.Yes:
             s = json.dumps(self.lastSaved)
             with open("json/calibration.txt", "w") as f:
                 f.write(s)
@@ -63,20 +76,6 @@ class QCGH(QtGui.QTableWidget, CGH):
         s = f.read()
         data = json.loads(s)
         return data
-        
-    def setUpGui(self):
-        #appearance of QCGH
-        self.setGeometry(0,0,50,300)
-        self.setWindowTitle("Calibration")
-        self.setColumnCount(1)
-        self.setRowCount(9)
-        #fill headers
-        labels = ('qpp','alpha','theta','rc xc', 'rc yc','rc zc','rs xc','rs yc','rs zc')
-        self.setHorizontalHeaderItem(0,QtGui.QTableWidgetItem(QtCore.QString('')))
-        for i in range(len(self.labelToRow.keys())):
-            self.setVerticalHeaderItem(i,QtGui.QTableWidgetItem(QtCore.QString(labels[i])))
-        #initialize constants after setting up GUI so they're put into table
-        self.initializeConstants()
                         
     def updateConstant(self):
         '''
@@ -110,8 +109,8 @@ class QCGH(QtGui.QTableWidget, CGH):
             print e
     
     def floatToWidgetItem(self, fl):
-        fl = '{0:.2f}'.format(fl)
-        return QtGui.QTableWidgetItem(QtCore.QString(fl))
+        flStr = '{0:.2f}'.format(fl)
+        return QtWidgets.QTableWidgetItem(flStr)
     
     def setWidgetValue(self,key,value):
         '''
@@ -189,6 +188,8 @@ class QCGH(QtGui.QTableWidget, CGH):
     
     @rc.setter
     def rc(self, vector):
+        if type(vector) == QtCore.QPointF:
+            vector = QtGui.QVector3D(vector)
         self.setX(vector, self.clamp(vector.x(), self.min_dict['rc xc'], self.max_dict['rc xc']), 'rc xc')
         self.setY(vector, self.clamp(vector.y(), self.min_dict['rc yc'], self.max_dict['rc yc']), 'rc yc')
         self.setZ(vector, self.clamp(vector.z(), self.min_dict['rc zc'], self.max_dict['rc zc']), 'rc zc')
@@ -201,6 +202,8 @@ class QCGH(QtGui.QTableWidget, CGH):
     
     @rs.setter
     def rs(self, vector):
+        if type(vector) == QtCore.QPointF:
+            vector = QtGui.QVector3D(vector)
         self.setX(vector, self.clamp(vector.x(), self.min_dict['rs xc'], self.max_dict['rs xc']), 'rs xc')
         self.setY(vector, self.clamp(vector.y(), self.min_dict['rs yc'], self.max_dict['rs yc']), 'rs yc')
         self.setZ(vector, self.clamp(vector.z(), self.min_dict['rs zc'], self.max_dict['rs zc']), 'rs zc')
@@ -209,6 +212,6 @@ class QCGH(QtGui.QTableWidget, CGH):
              
 if __name__ == '__main__':
     import sys
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     cgh = QCGH()
     sys.exit(app.exec_())
