@@ -70,7 +70,7 @@ class CGH(object):
         phi = (256. * (np.angle(psi) / np.pi + 1.)).astype(np.uint8)
         self.slm.setData(phi)
 
-    def updateGeometry(self):
+    def updateSlmGeometry(self):
         """Compute position-dependent properties in SLM plane.
         """
         qx = np.linspace(-self.rs.x(), self.w - 1 - self.rs.x(), self.w)
@@ -89,11 +89,8 @@ class CGH(object):
     @rs.setter
     def rs(self, rs):
         self._rs = rs
-        self.updateGeometry()
+        self.updateSlmGeometry()
         self.compute()
-        
-    def set_rs(self, value):
-        self.rs = value
 
     @property
     def qpp(self):
@@ -102,7 +99,7 @@ class CGH(object):
     @qpp.setter
     def qpp(self, value):
         self._qpp = value
-        self.updateGeometry()
+        self.updateSlmGeometry()
         self.compute()
 
     @property
@@ -112,7 +109,7 @@ class CGH(object):
     @alpha.setter
     def alpha(self, value):
         self._alpha = value
-        self.updateGeometry()
+        self.updateSlmGeometry()
         self.compute()
 
     def updateTransformationMatrix(self):
@@ -166,6 +163,6 @@ class CGH(object):
             self._rc = values['rc']
         if values.has_key('theta'):
             self._theta = values['theta']
-        self.updateGeometry()
+        self.updateSlmGeometry()
         self.updateTransformationMatrix()
         self.compute()

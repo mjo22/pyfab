@@ -2,6 +2,7 @@ from PyQt5 import QtGui, QtCore, QtWidgets
 from CGH import CGH
 import sys
 import json
+import numpy as np
 
 class QCGH(QtWidgets.QTableWidget, CGH):
     
@@ -138,7 +139,7 @@ class QCGH(QtWidgets.QTableWidget, CGH):
     def qpp(self, value):
         value = self.clamp(value, self.min_dict['qpp'], self.max_dict['qpp'])
         self._qpp = value
-        self.updateGeometry()
+        self.updateSlmGeometry()
         self.compute()
         self.setWidgetValue('qpp',value)
         
@@ -150,7 +151,7 @@ class QCGH(QtWidgets.QTableWidget, CGH):
     def alpha(self, value):
         value = self.clamp(value, self.min_dict['alpha'], self.max_dict['alpha'])
         self._alpha = value
-        self.updateGeometry()
+        self.updateSlmGeometry()
         self.compute()
         self.setWidgetValue('alpha',value)
         
@@ -188,7 +189,7 @@ class QCGH(QtWidgets.QTableWidget, CGH):
         if type(vector) == QtCore.QPointF:
             vector = QtGui.QVector3D(vector)
         self._rs = QtGui.QVector3D(self.clamp(vector.x(), self.min_dict['rs xc'], self.max_dict['rs xc']), self.clamp(vector.y(), self.min_dict['rs yc'], self.max_dict['rs yc']), self.clamp(vector.z(), self.min_dict['rs zc'], self.max_dict['rs zc']))
-        self.updateGeometry()
+        self.updateSlmGeometry()
         self.compute()
         self.setWidgetVector('rs xc', 'rs yc', 'rs zc', self._rs)
              
