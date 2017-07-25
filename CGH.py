@@ -91,6 +91,9 @@ class CGH(object):
         self._rs = rs
         self.updateGeometry()
         self.compute()
+        
+    def set_rs(self, value):
+        self.rs = value
 
     @property
     def qpp(self):
@@ -136,7 +139,7 @@ class CGH(object):
         self._theta = value
         self.updateTransformationMatrix()
         self.compute()
-
+        
     def setData(self, trapdata):
         self.trapdata = trapdata
         self.compute()

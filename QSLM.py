@@ -12,11 +12,11 @@ class QSLM(QtWidgets.QLabel):
 
     def __init__(self, parent=None, **kwargs):
         super(QSLM, self).__init__(parent)
-        desktop = QtWidgets.QDesktopWidget()
+        self.desktop = QtWidgets.QDesktopWidget()
         self.setWindowTitle('SLM')
-        if desktop.screenCount() == 2:
+        if self.desktop.screenCount() == 2:
             self.setWindowFlags(QtCore.Qt.FramelessWindowHint)            
-            rect = desktop.screenGeometry(1)
+            rect = self.desktop.screenGeometry(1)
             self.w, self.h = rect.width(), rect.height()
         else:
             self.w, self.h = 512, 512
@@ -25,6 +25,7 @@ class QSLM(QtWidgets.QLabel):
         self.data = phi
         self.setData(phi)
         self.center = np.array([self.width(), self.height()]) / 2
+        self.show()
 
     def toImage(self, data):
         img = QtGui.QImage(data.data,

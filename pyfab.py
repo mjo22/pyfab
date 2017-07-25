@@ -11,14 +11,21 @@ class pyfab(QtWidgets.QApplication):
     def __init__(self, parent=None): 
         super(pyfab, self).__init__(sys.argv)
         #implement main window
-        self.control = pyfabMainWindow()
-        #get signal from controller upon close to close event loop
-        self.control.sigClosed.connect(self.cleanup)
+        self.mainWindow = pyfabMainWindow()
+        #set hologram to slm
+        self.setToSlm(self.mainWindow.slm)
+        #get signal from mainWindow upon close to close event loop
+        self.mainWindow.sigClosed.connect(self.cleanup)
         #event loop
         self.exec_()
+        
+    def setToSlm(self, slm):
+        if slm.desktop.screenCount() == 2:
+            slm.windowHandle().setScreen(self.screens()[1])
+            slm.showFullScreen()
       
     def cleanup(self):
-        self.control.fabscreen.camera.close()
+        self.mainWindow.fabscreen.camera.close()
         self.closeAllWindows()
         self.exit()
         

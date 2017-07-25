@@ -11,8 +11,8 @@ class QCGH(QtWidgets.QTableWidget, CGH):
         From the program- 
             Use the table in the "Calibration" tab.
         From the terminal-
-            For values simply use the setters of the constant. 
-            For vectors, either use setX, setY, setZ as written in this QCGH class, or call setter and set equal to a QtGui.QVector3D(x, y, z) object.
+            For values, call setter and set equal to float. 
+            For vectors, call setter and set equal to a QtGui.QVector3D(x, y, z).
     '''
     #bounds
     max_dict = {'qpp':10,'alpha':360,'theta':360,'rc xc':10, 'rc yc':10,'rc zc':10,'rs xc':10,'rs yc':10,'rs zc':10}
@@ -94,17 +94,17 @@ class QCGH(QtWidgets.QTableWidget, CGH):
             elif row == self.labelToRow['theta']:
                 self.theta = inputFl
             elif row == self.labelToRow['rc xc']:
-                self.setX(self.rc,inputFl,'rc xc')
+                self.rc = QtGui.QVector3D(inputFl, self.rc.y(), self.rc.z())
             elif row == self.labelToRow['rc yc']:
-                self.setY(self.rc,inputFl,'rc yc')
+                self.rc = QtGui.QVector3D(self.rc.x(), inputFl, self.rc.z())
             elif row == self.labelToRow['rc zc']:
-                self.setZ(self.rc,inputFl,'rc zc')
+                self.rc = QtGui.QVector3D(self.rc.x(), self.rc.y(), inputFl)
             elif row == self.labelToRow['rs xc']:
-                self.setX(self.rs,inputFl,'rs xc')
+                self.rs = QtGui.QVector3D(inputFl, self.rs.y(), self.rs.z())
             elif row == self.labelToRow['rs yc']:
-                self.setY(self.rs,inputFl,'rs yc')
+                self.rs = QtGui.QVector3D(self.rs.x(), inputFl, self.rs.z())
             elif row == self.labelToRow['rs zc']:
-                self.setZ(self.rs,inputFl,'rs zc')
+                self.rs = QtGui.QVector3D(self.rs.x(), self.rs.y(), inputFl)
         except Exception, e:
             print e
     
@@ -122,32 +122,10 @@ class QCGH(QtWidgets.QTableWidget, CGH):
         self.blockSignals(False)
         self.constantsSaved = False
         
-    def setX(self,vector,value,key):
-        '''
-        Used to just change the x value of a QVector3D. Call the setter to change all three 
-        components at once.
-        '''
-        value = self.clamp(value, self.min_dict[key], self.max_dict[key])
-        vector.setX(value)
-        self.setWidgetValue(key,vector.x())
-        
-    def setY(self,vector,value,key):
-        '''
-        Used to just change the x value of a QVector3D. Call the setter to change all three 
-        components at once.
-        '''
-        value = self.clamp(value, self.min_dict[key], self.max_dict[key])
-        vector.setY(value)
-        self.setWidgetValue(key,vector.y())
-        
-    def setZ(self,vector,value,key):
-        '''
-        Used to just change the x value of a QVector3D. Call the setter to change all three 
-        components at once.
-        '''
-        value = self.clamp(value, self.min_dict[key], self.max_dict[key])
-        vector.setZ(value)
-        self.setWidgetValue(key,vector.z())
+    def setWidgetVector(self, keyX, keyY, keyZ, vector):
+        self.setWidgetValue(keyX,vector.x())
+        self.setWidgetValue(keyY,vector.y())
+        self.setWidgetValue(keyZ,vector.z())
         
     def clamp(self, n, mini, maxi):
         return max(min(n, maxi), mini)    
@@ -160,6 +138,8 @@ class QCGH(QtWidgets.QTableWidget, CGH):
     def qpp(self, value):
         value = self.clamp(value, self.min_dict['qpp'], self.max_dict['qpp'])
         self._qpp = value
+        self.updateGeometry()
+        self.compute()
         self.setWidgetValue('qpp',value)
         
     @CGH.alpha.getter
@@ -170,6 +150,8 @@ class QCGH(QtWidgets.QTableWidget, CGH):
     def alpha(self, value):
         value = self.clamp(value, self.min_dict['alpha'], self.max_dict['alpha'])
         self._alpha = value
+        self.updateGeometry()
+        self.compute()
         self.setWidgetValue('alpha',value)
         
     @CGH.theta.getter
@@ -180,6 +162,8 @@ class QCGH(QtWidgets.QTableWidget, CGH):
     def theta(self, value):
         value = self.clamp(value, self.min_dict['theta'], self.max_dict['theta'])
         self._theta = value
+        self.updateTransformationMatrix()
+        self.compute()
         self.setWidgetValue('theta',value)
     
     @CGH.rc.getter
@@ -190,11 +174,10 @@ class QCGH(QtWidgets.QTableWidget, CGH):
     def rc(self, vector):
         if type(vector) == QtCore.QPointF:
             vector = QtGui.QVector3D(vector)
-        self.setX(vector, self.clamp(vector.x(), self.min_dict['rc xc'], self.max_dict['rc xc']), 'rc xc')
-        self.setY(vector, self.clamp(vector.y(), self.min_dict['rc yc'], self.max_dict['rc yc']), 'rc yc')
-        self.setZ(vector, self.clamp(vector.z(), self.min_dict['rc zc'], self.max_dict['rc zc']), 'rc zc')
-        self._rc = vector
-        self.constantsSaved = False
+        self._rc = QtGui.QVector3D(self.clamp(vector.x(), self.min_dict['rc xc'], self.max_dict['rc xc']), self.clamp(vector.y(), self.min_dict['rc yc'], self.max_dict['rc yc']), self.clamp(vector.z(), self.min_dict['rc zc'], self.max_dict['rc zc']))
+        self.updateTransformationMatrix()
+        self.compute()
+        self.setWidgetVector('rc xc', 'rc yc', 'rc zc', self._rc)
     
     @CGH.rs.getter
     def rs(self):
@@ -204,11 +187,10 @@ class QCGH(QtWidgets.QTableWidget, CGH):
     def rs(self, vector):
         if type(vector) == QtCore.QPointF:
             vector = QtGui.QVector3D(vector)
-        self.setX(vector, self.clamp(vector.x(), self.min_dict['rs xc'], self.max_dict['rs xc']), 'rs xc')
-        self.setY(vector, self.clamp(vector.y(), self.min_dict['rs yc'], self.max_dict['rs yc']), 'rs yc')
-        self.setZ(vector, self.clamp(vector.z(), self.min_dict['rs zc'], self.max_dict['rs zc']), 'rs zc')
-        self._rs = vector
-        self.constantsSaved = False
+        self._rs = QtGui.QVector3D(self.clamp(vector.x(), self.min_dict['rs xc'], self.max_dict['rs xc']), self.clamp(vector.y(), self.min_dict['rs yc'], self.max_dict['rs yc']), self.clamp(vector.z(), self.min_dict['rs zc'], self.max_dict['rs zc']))
+        self.updateGeometry()
+        self.compute()
+        self.setWidgetVector('rs xc', 'rs yc', 'rs zc', self._rs)
              
 if __name__ == '__main__':
     import sys
