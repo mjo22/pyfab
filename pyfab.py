@@ -17,7 +17,8 @@ class pyfab(QtWidgets.QApplication):
         #get signal from mainWindow upon close to close event loop
         self.mainWindow.sigClosed.connect(self.cleanup)
         #event loop
-        self.exec_()
+        if sys.platform != 'linux2':
+            self.exec_()
         
     def setToSlm(self, slm):
         if slm.desktop.screenCount() == 2:
