@@ -4,7 +4,7 @@
 
 import cv2
 import pyqtgraph as pg
-from PyQt5.QtCore import QObject, QThread, QPoint, QRectF, QSizeF, QTimer, Qt
+from PyQt4.QtCore import QObject, QThread, QPoint, QRectF, QSizeF, QTimer, Qt
 
 
 def is_cv2():

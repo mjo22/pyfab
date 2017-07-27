@@ -4,9 +4,9 @@
 
 import numpy as np
 import pyqtgraph as pg
-from pyqtgraph.Qt import QtCore, QtGui, QtWidgets
+from pyqtgraph.Qt import QtCore, QtGui
 from QCameraItem import QCameraItem
-from PyQt5.QtCore import Qt
+from PyQt4.QtCore import Qt
 
 
 class QFabGraphicsView(pg.GraphicsLayoutWidget):
@@ -96,6 +96,7 @@ class demopattern(object):
         self.xy = []
         self.index = None
 
+        
     def updateScreen(self):
         """Draw traps on fabscreen
         """
@@ -154,7 +155,7 @@ class demopattern(object):
 def main():
     import sys
     
-    app = QtWidgets.QApplication(sys.argv)
+    app = QtGui.QApplication(sys.argv)
 
     fabscreen = QFabGraphicsView(size=(640, 480), gray=True)
     fabscreen.show()

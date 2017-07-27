@@ -1,4 +1,4 @@
-from pyqtgraph.Qt import QtGui, QtCore, QtWidgets
+from pyqtgraph.Qt import QtGui, QtCore
 from traps import QTrappingPattern
 from QFabGraphicsView import QFabGraphicsView
 from QSLM import QSLM
@@ -7,7 +7,7 @@ from QCGH import QCGH
 import sys
 import json
         
-class pyfabMainWindow(QtWidgets.QMainWindow):
+class pyfabMainWindow(QtGui.QMainWindow):
     
     sigClosed = QtCore.pyqtSignal()
     
@@ -25,7 +25,7 @@ class pyfabMainWindow(QtWidgets.QMainWindow):
         
     def setUpGui(self):
         #set geometry, window appearance
-        desktop = QtWidgets.QDesktopWidget()
+        desktop = QtGui.QDesktopWidget()
         width = desktop.screenGeometry().width()
         minWidth = int(width / 1.5)
         maxWidth = width
@@ -39,9 +39,9 @@ class pyfabMainWindow(QtWidgets.QMainWindow):
         self.setWindowIcon(QtGui.QIcon('icon/pyqtlogo.png'))
         
         #define widgets
-        self.window = QtWidgets.QWidget()
-        self.layout = QtWidgets.QHBoxLayout()
-        self.tabs = QtWidgets.QTabWidget()
+        self.window = QtGui.QWidget()
+        self.layout = QtGui.QHBoxLayout()
+        self.tabs = QtGui.QTabWidget()
         #add tabs
         self.tabs.addTab(self.pattern.pipeline, 'Calibration')
         #create layout
@@ -55,15 +55,15 @@ class pyfabMainWindow(QtWidgets.QMainWindow):
         self.setCentralWidget(self.window)
 
         #QActions
-        exit = QtWidgets.QAction('&Exit', self)        
+        exit = QtGui.QAction('&Exit', self)        
         exit.setShortcut('Ctrl+Q')
         exit.setStatusTip('Exit application')
         exit.triggered.connect(self.close)
-        saveCalibration = QtWidgets.QAction('&Save', self)
+        saveCalibration = QtGui.QAction('&Save', self)
         saveCalibration.setShortcut('Ctrl+S')
         saveCalibration.setStatusTip('Save calibration settings')
         saveCalibration.triggered.connect(self.pattern.pipeline.saveData)
-        restoreCalibration = QtWidgets.QAction('&Restore', self)
+        restoreCalibration = QtGui.QAction('&Restore', self)
         restoreCalibration.setShortcut('Ctrl+R')
         restoreCalibration.setStatusTip('Restore calibration settings')
         restoreCalibration.triggered.connect(self.pattern.pipeline.restoreData)
@@ -77,17 +77,17 @@ class pyfabMainWindow(QtWidgets.QMainWindow):
         self.show()
          
     def closeEvent(self, event):
-        result = QtWidgets.QMessageBox.question(self,
+        result = QtGui.QMessageBox.question(self,
                       "Confirm quit",
                       "Are you sure you want to quit?",
-                      QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-        if result == QtWidgets.QMessageBox.Yes:
+                      QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+        if result == QtGui.QMessageBox.Yes:
             if self.pattern.pipeline.constantsSaved == False:
-                savePrompt = QtWidgets.QMessageBox.question(self,
+                savePrompt = QtGui.QMessageBox.question(self,
                       "Save",
                       "Do you want to save your calibration settings?",
-                      QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-                if savePrompt == QtWidgets.QMessageBox.Yes:
+                      QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+                if savePrompt == QtGui.QMessageBox.Yes:
                     self.pattern.pipeline.saveData()
             event.accept()
             self.sigClosed.emit()
@@ -100,6 +100,6 @@ if __name__ == '__main__':
 
 def main():
     import sys
-    app = QtWidgets.QApplication(sys.argv)
+    app = QtGui.QApplication(sys.argv)
     mainWindow = pyfabMainWindow()
     sys.exit(app.exec_())

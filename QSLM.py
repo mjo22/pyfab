@@ -2,24 +2,26 @@
 
 """QSLM.py: PyQt abstraction for a Spatial Light Modulator (SLM)."""
 
-from PyQt5 import QtGui, QtCore, QtWidgets
+from PyQt4 import QtGui, QtCore
 import numpy as np
 
 
-class QSLM(QtWidgets.QLabel):
+class QSLM(QtGui.QLabel):
 
     gray = [QtGui.qRgb(i, i, i) for i in range(256)]
 
     def __init__(self, parent=None, **kwargs):
-        super(QSLM, self).__init__(parent)
-        self.desktop = QtWidgets.QDesktopWidget()
-        self.setWindowTitle('SLM')
+        self.desktop = QtGui.QDesktopWidget()
         if self.desktop.screenCount() == 2:
-            self.setWindowFlags(QtCore.Qt.FramelessWindowHint)            
             rect = self.desktop.screenGeometry(1)
             self.w, self.h = rect.width(), rect.height()
+            parent = self.desktop.screen(1)
+            super(QSLM, self).__init__(parent)
+            self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         else:
             self.w, self.h = 512, 512
+            super(QSLM, self).__init__(parent)
+        self.setWindowTitle('SLM')
         self.image = QtGui.QImage()
         phi = np.zeros((self.w, self.h), dtype=np.uint8)
         self.data = phi
@@ -54,7 +56,7 @@ class QSLM(QtWidgets.QLabel):
 def main():
     import sys
 
-    app = QtWidgets.QApplication(sys.argv)
+    app = QtGui.QApplication(sys.argv)
     slm = QSLM()
     slm.show()
     sys.exit(app.exec_())

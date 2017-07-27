@@ -2,8 +2,8 @@
 
 """QTrappingPattern.py: Interface between QFabScreen and QSLM."""
 
-from PyQt5 import QtGui, QtWidgets
-from PyQt5.QtCore import Qt, QPoint, QRect, QRectF, QSize
+from PyQt4 import QtGui
+from PyQt4.QtCore import Qt, QPoint, QRect, QRectF, QSize
 from QTrap import QTrap
 from QTrapGroup import QTrapGroup
 from states import states
@@ -24,8 +24,8 @@ class QTrappingPattern(QTrapGroup):
         self.fabscreen.sigFSMouseRelease.connect(self.mouseRelease)
         self.fabscreen.sigFSWheel.connect(self.wheel)
         # Rubberband selection
-        self.selection = QtWidgets.QRubberBand(
-            QtWidgets.QRubberBand.Rectangle, self.fabscreen)
+        self.selection = QtGui.QRubberBand(
+            QtGui.QRubberBand.Rectangle, self.fabscreen)
         self.origin = QPoint()
         # selected trap and group
         self.trap = None

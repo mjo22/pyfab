@@ -3,7 +3,7 @@
 """CGH.py: compute phase-only holograms for optical traps."""
 
 import numpy as np
-from PyQt5 import QtGui, QtCore
+from PyQt4 import QtGui, QtCore
 from numba import jit
 
 

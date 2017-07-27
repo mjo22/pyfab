@@ -1,10 +1,11 @@
-from PyQt5 import QtGui, QtCore, QtWidgets
+from PyQt4 import QtGui, QtCore
+from PyQt4.QtGui import QVector3D
 from CGH import CGH
 import sys
 import json
 import numpy as np
 
-class QCGH(QtWidgets.QTableWidget, CGH):
+class QCGH(QtGui.QTableWidget, CGH):
     
     '''
     A GUI to set calibration constants. 
@@ -13,7 +14,7 @@ class QCGH(QtWidgets.QTableWidget, CGH):
             Use the table in the "Calibration" tab.
         From the terminal-
             For values, call setter and set equal to float. 
-            For vectors, call setter and set equal to a QtGui.QVector3D(x, y, z).
+            For vectors, call setter and set equal to a QVector3D(x, y, z).
     '''
     #bounds
     max_dict = {'qpp':10,'alpha':360,'theta':360,'rc xc':10, 'rc yc':10,'rc zc':10,'rs xc':10,'rs yc':10,'rs zc':10}
@@ -34,9 +35,9 @@ class QCGH(QtWidgets.QTableWidget, CGH):
         self.setRowCount(9)
         #fill headers
         labels = ('qpp','alpha','theta','rc xc', 'rc yc','rc zc','rs xc','rs yc','rs zc')
-        self.setHorizontalHeaderItem(0,QtWidgets.QTableWidgetItem(''))
+        self.setHorizontalHeaderItem(0,QtGui.QTableWidgetItem(''))
         for i in range(len(self.labelToRow.keys())):
-            self.setVerticalHeaderItem(i,QtWidgets.QTableWidgetItem(labels[i]))
+            self.setVerticalHeaderItem(i,QtGui.QTableWidgetItem(labels[i]))
         #initialize constants after setting up GUI so they're put into table
         self.initializeConstants()
         
@@ -48,8 +49,8 @@ class QCGH(QtWidgets.QTableWidget, CGH):
         self.theta = self.lastSaved['theta']
         self.alpha = self.lastSaved['alpha']
         self.qpp = self.lastSaved['qpp']
-        self.rc = QtGui.QVector3D(self.lastSaved['rc xc'],self.lastSaved['rc yc'],self.lastSaved['rc zc'])
-        self.rs = QtGui.QVector3D(self.lastSaved['rs xc'],self.lastSaved['rs yc'],self.lastSaved['rs zc'])
+        self.rc = QVector3D(self.lastSaved['rc xc'],self.lastSaved['rc yc'],self.lastSaved['rc zc'])
+        self.rs = QVector3D(self.lastSaved['rs xc'],self.lastSaved['rs yc'],self.lastSaved['rs zc'])
         self.constantsSaved = True
         
     def saveData(self):
@@ -61,11 +62,11 @@ class QCGH(QtWidgets.QTableWidget, CGH):
         self.constantsSaved = True
         
     def restoreData(self):
-        restore = QtWidgets.QMessageBox.question(self,
+        restore = QtGui.QMessageBox.question(self,
                       "Restore Calibration Settings",
                       "Are you sure you want to restore? Current settings will be lost.",
-                      QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-        if restore == QtWidgets.QMessageBox.Yes:
+                      QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+        if restore == QtGui.QMessageBox.Yes:
             s = json.dumps(self.lastSaved)
             with open("json/calibration.txt", "w") as f:
                 f.write(s)
@@ -95,23 +96,23 @@ class QCGH(QtWidgets.QTableWidget, CGH):
             elif row == self.labelToRow['theta']:
                 self.theta = inputFl
             elif row == self.labelToRow['rc xc']:
-                self.rc = QtGui.QVector3D(inputFl, self.rc.y(), self.rc.z())
+                self.rc = QVector3D(inputFl, self.rc.y(), self.rc.z())
             elif row == self.labelToRow['rc yc']:
-                self.rc = QtGui.QVector3D(self.rc.x(), inputFl, self.rc.z())
+                self.rc = QVector3D(self.rc.x(), inputFl, self.rc.z())
             elif row == self.labelToRow['rc zc']:
-                self.rc = QtGui.QVector3D(self.rc.x(), self.rc.y(), inputFl)
+                self.rc = QVector3D(self.rc.x(), self.rc.y(), inputFl)
             elif row == self.labelToRow['rs xc']:
-                self.rs = QtGui.QVector3D(inputFl, self.rs.y(), self.rs.z())
+                self.rs = QVector3D(inputFl, self.rs.y(), self.rs.z())
             elif row == self.labelToRow['rs yc']:
-                self.rs = QtGui.QVector3D(self.rs.x(), inputFl, self.rs.z())
+                self.rs = QVector3D(self.rs.x(), inputFl, self.rs.z())
             elif row == self.labelToRow['rs zc']:
-                self.rs = QtGui.QVector3D(self.rs.x(), self.rs.y(), inputFl)
+                self.rs = QVector3D(self.rs.x(), self.rs.y(), inputFl)
         except Exception, e:
             print e
     
     def floatToWidgetItem(self, fl):
         flStr = '{0:.2f}'.format(fl)
-        return QtWidgets.QTableWidgetItem(flStr)
+        return QtGui.QTableWidgetItem(flStr)
     
     def setWidgetValue(self,key,value):
         '''
@@ -174,8 +175,8 @@ class QCGH(QtWidgets.QTableWidget, CGH):
     @rc.setter
     def rc(self, vector):
         if type(vector) == QtCore.QPointF:
-            vector = QtGui.QVector3D(vector)
-        self._rc = QtGui.QVector3D(self.clamp(vector.x(), self.min_dict['rc xc'], self.max_dict['rc xc']), self.clamp(vector.y(), self.min_dict['rc yc'], self.max_dict['rc yc']), self.clamp(vector.z(), self.min_dict['rc zc'], self.max_dict['rc zc']))
+            vector = QVector3D(vector)
+        self._rc = QVector3D(self.clamp(vector.x(), self.min_dict['rc xc'], self.max_dict['rc xc']), self.clamp(vector.y(), self.min_dict['rc yc'], self.max_dict['rc yc']), self.clamp(vector.z(), self.min_dict['rc zc'], self.max_dict['rc zc']))
         self.updateTransformationMatrix()
         self.compute()
         self.setWidgetVector('rc xc', 'rc yc', 'rc zc', self._rc)
@@ -187,14 +188,14 @@ class QCGH(QtWidgets.QTableWidget, CGH):
     @rs.setter
     def rs(self, vector):
         if type(vector) == QtCore.QPointF:
-            vector = QtGui.QVector3D(vector)
-        self._rs = QtGui.QVector3D(self.clamp(vector.x(), self.min_dict['rs xc'], self.max_dict['rs xc']), self.clamp(vector.y(), self.min_dict['rs yc'], self.max_dict['rs yc']), self.clamp(vector.z(), self.min_dict['rs zc'], self.max_dict['rs zc']))
+            vector = QVector3D(vector)
+        self._rs = QVector3D(self.clamp(vector.x(), self.min_dict['rs xc'], self.max_dict['rs xc']), self.clamp(vector.y(), self.min_dict['rs yc'], self.max_dict['rs yc']), self.clamp(vector.z(), self.min_dict['rs zc'], self.max_dict['rs zc']))
         self.updateSlmGeometry()
         self.compute()
         self.setWidgetVector('rs xc', 'rs yc', 'rs zc', self._rs)
              
 if __name__ == '__main__':
     import sys
-    app = QtWidgets.QApplication(sys.argv)
+    app = QtGui.QApplication(sys.argv)
     cgh = QCGH()
     sys.exit(app.exec_())
