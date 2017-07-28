@@ -20,7 +20,7 @@ class pyfab(QtGui.QApplication):
         if sys.platform != 'linux2':
             self.exec_()
         '''
-        sys.exit(self.exec_())
+        self.exec_()
       
     def cleanup(self):
         self.win.fabscreen.camera.close()

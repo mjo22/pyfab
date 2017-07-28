@@ -26,7 +26,6 @@ class QCGH(QtGui.QTableWidget, CGH):
     def __init__(self, parent=None, slm=None):
         QtGui.QTableWidget.__init__(self, parent)
         CGH.__init__(self, slm=slm)
-        #super(QCGH, self).__init__(parent=parent, **kwargs)
         self.setUpGui()
         self.cellChanged.connect(self.updateConstant)
         
