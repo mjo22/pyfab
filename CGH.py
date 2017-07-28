@@ -3,8 +3,9 @@
 """CGH.py: compute phase-only holograms for optical traps."""
 
 import numpy as np
-from PyQt4 import QtGui, QtCore
+from pyqtgraph.Qt import QtGui, QtCore
 from numba import jit
+from QSLM import QSLM
 
 
 class CGH(object):
@@ -24,12 +25,12 @@ class CGH(object):
     optical axis.
     """
 
-    def __init__(self, slm=None):
+    def __init__(self):
         # Trap properties for current pattern
         self.trapdata = []
 
         # SLM geometry
-        self.slm = slm
+        self.slm = QSLM()
         self.w = self.slm.width()
         self.h = self.slm.height()
         # Conversion from SLM pixels to wavenumbers
@@ -52,11 +53,12 @@ class CGH(object):
         # Location of optical axis in camera coordinates
         # Calibration constant:
         # rc: QPointF
-        self.rc = QtCore.QPointF(320., 240.)
+        #self.rc = QtCore.QPointF(320., 240.)
         # Orientation of camera relative to SLM
         # Calibration constant:
         # theta: float
         self.theta = 0.
+        print 'CGH init'
         
     @jit
     def compute(self):

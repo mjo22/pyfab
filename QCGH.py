@@ -1,5 +1,6 @@
-from PyQt4 import QtGui, QtCore
+from pyqtgraph.Qt import QtGui, QtCore
 from PyQt4.QtGui import QVector3D
+from QSLM import QSLM
 from CGH import CGH
 import sys
 import json
@@ -22,15 +23,15 @@ class QCGH(QtGui.QTableWidget, CGH):
     #define correspondence of a label to its row
     labelToRow = {'qpp':0,'alpha':1,'theta':2,'rc xc':3, 'rc yc':4,'rc zc':5,'rs xc':6,'rs yc':7,'rs zc':8}
     
-    def __init__(self, slm):
-        super(QCGH, self).__init__(slm=slm)
+    def __init__(self):
+        super(QCGH, self).__init__()
         self.setUpGui()
         self.cellChanged.connect(self.updateConstant)
+        print 'QCGH init'
         
     def setUpGui(self):
         #appearance of QCGH
         self.setGeometry(0,0,50,300)
-        self.setWindowTitle("Calibration")
         self.setColumnCount(1)
         self.setRowCount(9)
         #fill headers

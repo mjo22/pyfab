@@ -19,8 +19,7 @@ class pyfabMainWindow(QtGui.QMainWindow):
     def setUpFab(self):
         self.fabscreen = QFabGraphicsView(size=(640,480), gray=True, mirrored=False)
         self.pattern = QTrappingPattern(self.fabscreen)
-        self.slm = QSLM()
-        self.pattern.pipeline = QCGH(self.slm)
+        self.pattern.pipeline = QCGH()
         self.show()
         
     def setUpGui(self):

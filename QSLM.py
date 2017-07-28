@@ -2,7 +2,7 @@
 
 """QSLM.py: PyQt abstraction for a Spatial Light Modulator (SLM)."""
 
-from PyQt4 import QtGui, QtCore
+from pyqtgraph.Qt import QtGui, QtCore
 import numpy as np
 
 
