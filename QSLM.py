@@ -10,7 +10,7 @@ class QSLM(QtGui.QLabel):
 
     gray = [QtGui.qRgb(i, i, i) for i in range(256)]
 
-    def __init__(self, parent=None, **kwargs):
+    def __init__(self, parent=None):
         self.desktop = QtGui.QDesktopWidget()
         if self.desktop.screenCount() == 2:
             rect = self.desktop.screenGeometry(1)
@@ -21,7 +21,7 @@ class QSLM(QtGui.QLabel):
         else:
             self.w, self.h = 512, 512
             super(QSLM, self).__init__(parent)
-        self.setWindowTitle('SLM')
+            self.setWindowTitle('SLM')
         self.image = QtGui.QImage()
         phi = np.zeros((self.w, self.h), dtype=np.uint8)
         self.data = phi

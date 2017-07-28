@@ -1,4 +1,4 @@
-from pyqtgraph.Qt import QtGui, QtCore
+from PyQt4 import QtGui, QtCore
 from PyQt4.QtGui import QVector3D
 from QSLM import QSLM
 from CGH import CGH
@@ -23,11 +23,12 @@ class QCGH(QtGui.QTableWidget, CGH):
     #define correspondence of a label to its row
     labelToRow = {'qpp':0,'alpha':1,'theta':2,'rc xc':3, 'rc yc':4,'rc zc':5,'rs xc':6,'rs yc':7,'rs zc':8}
     
-    def __init__(self):
-        super(QCGH, self).__init__()
+    def __init__(self, parent=None, slm=None):
+        QtGui.QTableWidget.__init__(self, parent)
+        CGH.__init__(self, slm=slm)
+        #super(QCGH, self).__init__(parent=parent, **kwargs)
         self.setUpGui()
         self.cellChanged.connect(self.updateConstant)
-        print 'QCGH init'
         
     def setUpGui(self):
         #appearance of QCGH
@@ -198,5 +199,6 @@ class QCGH(QtGui.QTableWidget, CGH):
 if __name__ == '__main__':
     import sys
     app = QtGui.QApplication(sys.argv)
-    cgh = QCGH()
+    slm = QSLM()
+    cgh = QCGH(slm=slm)
     sys.exit(app.exec_())
