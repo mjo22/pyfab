@@ -36,7 +36,6 @@ class pyfabMainWindow(QtGui.QMainWindow):
         self.setMinimumSize(QtCore.QSize(minWidth, minWidth/aspectRatio))
         self.setMaximumSize(QtCore.QSize(maxWidth, maxWidth/aspectRatio))
         self.setWindowTitle("Pyfab")
-        self.setWindowIcon(QtGui.QIcon('icon/pyqtlogo.png'))
         
         #define widgets
         self.window = QtGui.QWidget()
@@ -68,12 +67,13 @@ class pyfabMainWindow(QtGui.QMainWindow):
         restoreCalibration.setStatusTip('Restore calibration settings')
         restoreCalibration.triggered.connect(self.pattern.pipeline.restoreData)
         #Add QActions to menubar
-        mainMenu = self.menuBar()
-        file = mainMenu.addMenu('File')
+        toolMenu = QtGui.QMenuBar()
+        toolMenu.setNativeMenuBar(False)
+        self.setMenuBar(toolMenu)
+        file = toolMenu.addMenu('File')
         file.addAction(exit)
         file.addAction(saveCalibration)
         file.addAction(restoreCalibration)
-        
         self.show()
          
     def closeEvent(self, event):
@@ -96,9 +96,6 @@ class pyfabMainWindow(QtGui.QMainWindow):
             
         
 if __name__ == '__main__':
-    main()   
-
-def main():
     import sys
     app = QtGui.QApplication(sys.argv)
     mainWindow = pyfabMainWindow()
