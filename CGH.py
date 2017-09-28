@@ -67,7 +67,7 @@ class CGH(object):
             amp = properties['a'] * np.exp(1j * properties['phi'])
             ex = np.exp(self.iqx * r.x() + self.iqxsq * r.z())
             ey = np.exp(self.iqy * r.y() + self.iqysq * r.z())
-            psi += np.outer(amp * ey, ex)
+            psi += np.outer(amp*ex, ey)
         phi = (256. * (np.angle(psi) / np.pi + 1.)).astype(np.uint8)
         self.slm.setData(phi)
 
