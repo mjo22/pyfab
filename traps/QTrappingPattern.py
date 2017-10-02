@@ -208,7 +208,7 @@ class QTrappingPattern(QTrapGroup):
         self.group = self.groupOf(self.trap)
         if self.group is not None:
             self.group.state = states.selected
-            dr = QtGui.QVector3D(0., 0., event.angleDelta().y() / 120.)
+            dr = QtGui.QVector3D(0., 0., event.delta() / 120.)
             self.group.moveBy(dr)
             self.updatePipeline()
             self.updateScreen()
