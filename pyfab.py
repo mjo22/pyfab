@@ -14,13 +14,6 @@ class pyfab(QtGui.QApplication):
         self.win = pyfabMainWindow()
         #get signal from mainWindow upon close to close event loop
         self.win.sigClosed.connect(self.cleanup)
-        #event loop
-        '''
-        NOT WORKING ON UBUNTU 16.04. On Ubuntu 14, you didn't need to run an event loop and could control the program from the terminal
-        if sys.platform != 'linux2':
-            self.exec_()
-        '''
-        self.exec_()
       
     def cleanup(self):
         self.win.fabscreen.camera.close()
