@@ -6,23 +6,33 @@ from CGH import CGH
 from QCGH import QCGH
 import sys
 import json
+
+"""QPyfab: GUI for holographic optical trapping"""
         
 class QPyfab(QtGui.QMainWindow):
     
-    sigClosed = QtCore.pyqtSignal()
-    
+    sigClosed = QtCore.pyqtSignal()   #Signal that will emited after closing QPyfab. Is handled by pyfab class    
+
+    '''
+    Initalizes fabscreen and all gui functionality
+    '''
     def __init__(self):
         super(QPyfab, self).__init__()
         self.initFab()
         self.initGui()
-     
+
+    '''
+    Initialize fabscreen and pass it to the trapping pattern. Then set CGH pipeline and give it an slm.
+    '''
     def initFab(self):
         self.fabscreen = QFabGraphicsView(size=(640,480), gray=True, mirrored=False)
         self.pattern = QTrappingPattern(self.fabscreen)
         self.slm = QSLM()
         self.pattern.pipeline = QCGH(slm=self.slm)
         self.show()
-        
+    '''
+    Initializes all QMainWindow GUI functionality. See inline comments for specifics.
+    '''
     def initGui(self):
         #set geometry, window appearance
         desktop = QtGui.QDesktopWidget()
@@ -75,7 +85,10 @@ class QPyfab(QtGui.QMainWindow):
         file.addAction(saveCalibration)
         file.addAction(restoreCalibration)
         self.show()
-         
+
+    '''
+    Close event triggered by exiting QPyfab. Prompts the user to make sure they meant to exit, and asks if they want to save calibration settings if they have not done so.
+    '''
     def closeEvent(self, event):
         result = QtGui.QMessageBox.question(self,
                       "Confirm quit",

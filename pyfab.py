@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 
-"""pyfab.py: GUI for holographic optical trapping."""
+"""pyfab.py: Application that implements GUI holographic optical trapping."""
 
 from PyQt4 import QtGui
 from QPyfab import QPyfab
 import sys
-import os
 
 class pyfab(QtGui.QApplication):
 	
