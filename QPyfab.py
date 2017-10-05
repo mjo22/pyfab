@@ -7,23 +7,23 @@ from QCGH import QCGH
 import sys
 import json
         
-class pyfabMainWindow(QtGui.QMainWindow):
+class QPyfab(QtGui.QMainWindow):
     
     sigClosed = QtCore.pyqtSignal()
     
     def __init__(self):
-        super(pyfabMainWindow, self).__init__()
-        self.setUpFab()
-        self.setUpGui()
+        super(QPyfab, self).__init__()
+        self.initFab()
+        self.initGui()
      
-    def setUpFab(self):
+    def initFab(self):
         self.fabscreen = QFabGraphicsView(size=(640,480), gray=True, mirrored=False)
         self.pattern = QTrappingPattern(self.fabscreen)
         self.slm = QSLM()
         self.pattern.pipeline = QCGH(slm=self.slm)
         self.show()
         
-    def setUpGui(self):
+    def initGui(self):
         #set geometry, window appearance
         desktop = QtGui.QDesktopWidget()
         width = desktop.screenGeometry().width()
