@@ -34,7 +34,7 @@ class QFabGraphicsView(pg.GraphicsLayoutWidget):
                              enableMenu=False,
                              enableMouse=False)
         self.camera = QCameraItem(**kwargs)
-	self.videosource = self.camera	
+	self.videosource = self.camera
         vb.addItem(self.videosource)
 
         size = self.videosource.size

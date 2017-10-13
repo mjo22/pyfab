@@ -50,8 +50,8 @@ class QCameraDevice(QObject):
         self.flipped = flipped
         self.transposed = transposed
         self.gray = gray
-
-        self.camera = cv2.VideoCapture(cameraId)
+	self.cameraId = cameraId
+        self.camera = cv2.VideoCapture(self.cameraId)
         self.thread = QCameraThread(self.camera)
 
         self.size = size
@@ -259,7 +259,7 @@ class QCameraWidget(pg.PlotWidget):
 
 def main():
     import sys
-    from PyQt4.QtWidgets import QApplication
+    from PyQt4.QtGui import QApplication
 
     app = QApplication(sys.argv)
     device = QCameraDevice(gray=True, size=(640, 480))
