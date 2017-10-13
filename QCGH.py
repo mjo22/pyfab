@@ -1,4 +1,4 @@
-from PyQt4 import QtGui, QtCore
+from pyqtgraph.Qt import QtGui, QtCore
 from PyQt4.QtGui import QVector3D
 from QSLM import QSLM
 from CGH import CGH
@@ -82,7 +82,7 @@ class QCGH(QtGui.QTableWidget, CGH):
                         
     def updateConstant(self):
         '''
-        Call when user connects to cellChanged signal called by pyfabMainWindow
+        Call when user connects to cellChanged signal called by QPyfab
         '''
         row = self.currentRow()
         try:

@@ -11,7 +11,7 @@ import json
         
 class QPyfab(QtGui.QMainWindow):
     
-    sigClosed = QtCore.pyqtSignal()   #Signal that will emited after closing QPyfab. Is handled by pyfab class    
+    sigClosed = QtCore.pyqtSignal()   #Signal that will emited after closing QPyfab. Is handled by pyfab class   
 
     '''
     Initalizes fabscreen and all gui functionality

@@ -5,6 +5,8 @@
 import cv2
 import pyqtgraph as pg
 from PyQt4.QtCore import QObject, QThread, QPoint, QRectF, QSizeF, QTimer, Qt
+import numpy as np
+from PyQt4 import QtCore
 
 
 def is_cv2():
@@ -168,6 +170,8 @@ class QCameraItem(pg.ImageItem):
     a camera for updated video frames.
     """
 
+    sigFrameReady = QtCore.pyqtSignal(np.ndarray)
+
     def __init__(self, cameraDevice=None, parent=None, **kwargs):
         super(QCameraItem, self).__init__(parent, **kwargs)
 
@@ -197,6 +201,8 @@ class QCameraItem(pg.ImageItem):
         ready, frame = self.cameraDevice.read()
         if ready:
             self.setImage(frame, autoLevels=False)
+	    self.sigFrameReady.emit(frame)
+	    	
 
     @property
     def paused(self):
