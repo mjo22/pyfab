@@ -1,12 +1,13 @@
 
 """QFabRecorder.py: pyqtgraph module to record and play video files"""
 
+from pyqtgraph.Qt import QtCore
 import pyqtgraph as pg
 import cv2
 import numpy as np
 from datetime import datetime
 
-class QFabRecorder(QObject):
+class QFabRecorder(QtCore.QObject):
     '''Grabs frames from QCameraItem and records them if record=True.
     Saves file to ~/fabvideo/fabDATE HOUR:MINUTE
     '''
@@ -21,11 +22,12 @@ class QFabRecorder(QObject):
         super(QFabRecorder, self).__init__(parent, **kwargs)
         self.camera = camera
 	runname = "fab"
-	now = datetime.now()
-        ts = "%s %s:%s" % (now.date(), now.hour, now.minute)
-	self.fn = runname.append(ts + ".avi")
+        ts = "%s %s:%s" % (datetime.now().date(), datetime.now().hour, datetime.now().minute)
+	self.fn = runname + ts + ".avi"		#create filename
+	fourcc = cv2.cv.CV_FOURCC(*'XVID')
+	self.writer = cv2.VideoWriter('~/fabvideo/' + self.fn, fourcc, self.camera.cameraDevice.fps, (int(self.camera.cameraDevice.size.width()), int(self.camera.cameraDevice.size.height())))
         self._record = True	#must be initialized to true
-	self.record = self._record
+	self.record = self._record	#begin recording
 
     @property
     def record(self):
@@ -41,15 +43,14 @@ class QFabRecorder(QObject):
         record    	Boolean value that determines whether to record frames
         ==============  ===================================================================
         '''
-        if (type(record) = bool):
+        if (type(record) != bool):
             raise ValueError("record must be of type boolean")
         self._record = record
-        if (record):
-
+	self.i = 0
+        while(record and self.i<1000):	#for testing purposes, just write 1000 frames
 	    self.camera.sigFrameReady.connect(self.write)
-        else:
-            self.stop
-            self.save
+	    self.i = self.i + 1
+        self.stop
                 
     def write(self, frame):
 	#private
@@ -59,17 +60,14 @@ class QFabRecorder(QObject):
         frame    	Frame emitted by camera to be written to .avi file. Is type np.ndarray.
         ==============  ===================================================================
         '''
-	fourcc = cv2.VideoWriter_fourcc(*'XVID')
-	self.writer = cv2.VideoWriter('~/fabvideo/' + self.fn, fourcc, 20.0, (640,480))
 	self.writer.write(frame)
 
     def stop(self):
 	#public
-	pass
-
-    def save(self):
-	#private
-	pass
+	self.camera.sigFrameReady.disconnect()
+	#save
+	self.writer.release()
+	#how to destroy this object in memory?
 
 class QFabMovie(pg.ImageItem):
     '''Video source for pyqtgraph applications. Plays video in the viewbox of
