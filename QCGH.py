@@ -69,13 +69,13 @@ class QCGH(QtGui.QTableWidget, CGH):
                       QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
         if restore == QtGui.QMessageBox.Yes:
             s = json.dumps(self.lastSaved)
-            with open("json/calibration.txt", "w") as f:
+            with open(".json/calibration.txt", "w") as f:
                 f.write(s)
             self.constantsSaved = True
             self.initializeConstants()
     
     def getData(self):
-        f = open("json/calibration.txt", "r")
+        f = open(".json/calibration.txt", "r")
         s = f.read()
         data = json.loads(s)
         return data
@@ -89,27 +89,24 @@ class QCGH(QtGui.QTableWidget, CGH):
             inputFl = float(str(self.currentItem().text()))
         except:
             inputFl = 0.     
-        try:
-            if row == self.labelToRow['qpp']:
-                self.qpp = inputFl
-            elif row == self.labelToRow['alpha']:
-                self.alpha = inputFl
-            elif row == self.labelToRow['theta']:
-                self.theta = inputFl
-            elif row == self.labelToRow['rc xc']:
-                self.rc = QVector3D(inputFl, self.rc.y(), self.rc.z())
-            elif row == self.labelToRow['rc yc']:
-                self.rc = QVector3D(self.rc.x(), inputFl, self.rc.z())
-            elif row == self.labelToRow['rc zc']:
-                self.rc = QVector3D(self.rc.x(), self.rc.y(), inputFl)
-            elif row == self.labelToRow['rs xc']:
-                self.rs = QVector3D(inputFl, self.rs.y(), self.rs.z())
-            elif row == self.labelToRow['rs yc']:
-                self.rs = QVector3D(self.rs.x(), inputFl, self.rs.z())
-            elif row == self.labelToRow['rs zc']:
-                self.rs = QVector3D(self.rs.x(), self.rs.y(), inputFl)
-        except Exception, e:
-            print e
+        if row == self.labelToRow['qpp']:
+            self.qpp = inputFl
+        elif row == self.labelToRow['alpha']:
+            self.alpha = inputFl
+        elif row == self.labelToRow['theta']:
+            self.theta = inputFl
+        elif row == self.labelToRow['rc xc']:
+            self.rc = QVector3D(inputFl, self.rc.y(), self.rc.z())
+        elif row == self.labelToRow['rc yc']:
+            self.rc = QVector3D(self.rc.x(), inputFl, self.rc.z())
+        elif row == self.labelToRow['rc zc']:
+            self.rc = QVector3D(self.rc.x(), self.rc.y(), inputFl)
+        elif row == self.labelToRow['rs xc']:
+            self.rs = QVector3D(inputFl, self.rs.y(), self.rs.z())
+        elif row == self.labelToRow['rs yc']:
+            self.rs = QVector3D(self.rs.x(), inputFl, self.rs.z())
+        elif row == self.labelToRow['rs zc']:
+            self.rs = QVector3D(self.rs.x(), self.rs.y(), inputFl)
     
     def floatToWidgetItem(self, fl):
         flStr = '{0:.2f}'.format(fl)
