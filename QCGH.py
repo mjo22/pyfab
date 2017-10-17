@@ -31,7 +31,10 @@ class QCGH(QtGui.QTableWidget, CGH):
         
     def setUpGui(self):
         #appearance of QCGH
-        self.setGeometry(0,0,50,300)
+	desktop = QtGui.QDesktopWidget()
+        w = desktop.screenGeometry().width()
+	h = desktop.screenGeometry().height()
+        self.setGeometry(int(w/1.5),h/2,w/20,h/4)
         self.setColumnCount(1)
         self.setRowCount(9)
         #fill headers

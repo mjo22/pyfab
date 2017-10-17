@@ -52,8 +52,8 @@ class QPyfab(QtGui.QMainWindow):
         self.layout = QtGui.QHBoxLayout()
         self.tabs = QtGui.QTabWidget()
         #add tabs
-        self.tabs.addTab(self.pattern.pipeline, 'Calibration')
-        #create layout
+        #self.tabs.addTab(WIDGET FOR RECORDING, PAUSING, AND PLAYING VIDEO, 'Fabcorder')    
+	#create layout
         self.layout.addWidget(self.fabscreen)
         self.layout.addWidget(self.tabs)
         #set proportionality of fabscreen vs tabs
@@ -64,10 +64,12 @@ class QPyfab(QtGui.QMainWindow):
         self.setCentralWidget(self.window)
 
         #QActions
+	#for File
         exit = QtGui.QAction('&Exit', self)        
         exit.setShortcut('Ctrl+Q')
         exit.setStatusTip('Exit application')
         exit.triggered.connect(self.close)
+	#for Calibration
         saveCalibration = QtGui.QAction('&Save', self)
         saveCalibration.setShortcut('Ctrl+S')
         saveCalibration.setStatusTip('Save calibration settings')
@@ -76,14 +78,23 @@ class QPyfab(QtGui.QMainWindow):
         restoreCalibration.setShortcut('Ctrl+R')
         restoreCalibration.setStatusTip('Restore calibration settings')
         restoreCalibration.triggered.connect(self.pattern.pipeline.restoreData)
+	calibrate = QtGui.QAction('&Calibrate', self)
+        calibrate.setShortcut('Ctrl+K')
+	calibrate.setStatusTip('Calibrate pyfab')
+        calibrate.triggered.connect(self.pattern.pipeline.show)
+	#for Traps
+
         #Add QActions to menubar
-        toolMenu = QtGui.QMenuBar()
-        toolMenu.setNativeMenuBar(False)
-        self.setMenuBar(toolMenu)
-        file = toolMenu.addMenu('File')
-        file.addAction(exit)
-        file.addAction(saveCalibration)
-        file.addAction(restoreCalibration)
+        toolbar = QtGui.QMenuBar()
+        toolbar.setNativeMenuBar(False)
+        self.setMenuBar(toolbar)
+        fileMenu = toolbar.addMenu('File')
+        fileMenu.addAction(exit)
+	calMenu = toolbar.addMenu('Calibration')
+	calMenu.addAction(calibrate)
+	calMenu.addAction(saveCalibration)
+        calMenu.addAction(restoreCalibration)
+	trap = toolbar.addMenu('Traps')
         self.show()
 
     '''
