@@ -6,13 +6,14 @@ import pyqtgraph as pg
 import cv2
 import numpy as np
 from datetime import datetime
+import os
 
 class QFabRecorder(QtCore.QObject):
     '''Grabs frames from QCameraItem and records them if record=True.
     Saves file to ~/fabvideo/fabDATE HOUR:MINUTE
     '''
     
-    def __init__(self, camera, parent=None, **kwargs):
+    def __init__(self, camera, record=True, parent=None, **kwargs):
         '''Creates a fabrecorder.
         ==============  ===================================================================
         **Arguments:**
@@ -21,13 +22,20 @@ class QFabRecorder(QtCore.QObject):
         '''
         super(QFabRecorder, self).__init__(parent, **kwargs)
         self.camera = camera
+
+	#create file name and open VideoWriter
 	runname = "fab"
         ts = "%s %s:%s" % (datetime.now().date(), datetime.now().hour, datetime.now().minute)
-	self.fn = runname + ts + ".avi"		#create filename
+	fn = runname + ts + ".avi"		#create filename
 	fourcc = cv2.cv.CV_FOURCC(*'XVID')
-	self.writer = cv2.VideoWriter('~/fabvideo/' + self.fn, fourcc, self.camera.cameraDevice.fps, (int(self.camera.cameraDevice.size.width()), int(self.camera.cameraDevice.size.height())))
-        self._record = True	#must be initialized to true
+	path = os.path.join(os.path.expanduser('~'), 'fabvideo', fn)
+	self.writer = cv2.VideoWriter(path, fourcc, self.camera.cameraDevice.fps, (int(self.camera.cameraDevice.size.width()), int(self.camera.cameraDevice.size.height())))
+
+	#set properties
+	self._notWriting = True
+	self._record = record	#initialized to true by default
 	self.record = self._record	#begin recording
+
 
     @property
     def record(self):
@@ -37,7 +45,7 @@ class QFabRecorder(QtCore.QObject):
     def record(self, record):
 	#public
         '''If record is true, connect to signal from QCameraItem.nextframe() and start record
-        If false, disconnect from signal and save to video file
+        If false, disconnect from signal and close writer
 	==============  ===================================================================
         **Arguments:**
         record    	Boolean value that determines whether to record frames
@@ -46,11 +54,12 @@ class QFabRecorder(QtCore.QObject):
         if (type(record) != bool):
             raise ValueError("record must be of type boolean")
         self._record = record
-	self.i = 0
-        while(record and self.i<1000):	#for testing purposes, just write 1000 frames
-	    self.camera.sigFrameReady.connect(self.write)
-	    self.i = self.i + 1
-        self.stop
+	if (record):
+	    if(self.notWriting):
+		self.notWriting = False
+		self.camera.sigFrameReady.connect(self.write)	
+	else:
+	    self.stop
                 
     def write(self, frame):
 	#private
@@ -64,10 +73,32 @@ class QFabRecorder(QtCore.QObject):
 
     def stop(self):
 	#public
+	'''Disconnects from signal and closes writer.
+	'''
 	self.camera.sigFrameReady.disconnect()
-	#save
 	self.writer.release()
-	#how to destroy this object in memory?
+    
+    @property
+    def notWriting(self):
+	return self._notWriting
+    
+
+    @notWriting.setter
+    def notWriting(self, notWriting):
+	#public
+	'''
+	==============  ===================================================================
+        **Arguments:**
+        notWriting   	Boolean value that determines whether the recording is paused.
+        ==============  ===================================================================
+	'''
+	if (type(notWriting) != bool):
+            raise ValueError("notWriting must be of type boolean")
+	self._notWriting = notWriting
+	if (notWriting):
+	    self.camera.sigFrameReady.disconnect()
+
+
 
 class QFabMovie(pg.ImageItem):
     '''Video source for pyqtgraph applications. Plays video in the viewbox of
