@@ -47,28 +47,24 @@ class CGH(object):
         self.rs = QtCore.QPointF(self.w / 2., self.h / 2.)
 
         # Coordinate transformation matrix for trap locations
-        self.m = QtGui.QMatrix4x4()
+        self.transformationMatrix = QtGui.QMatrix4x4()
+        # Calibration constant:
+        # location of optical axis in camera coordinates
         self._rc = QtCore.QPointF()
+        # Calibration constant:
+        # orientation of camera relative to SLM
         self._theta = 0.
-        # Location of optical axis in camera coordinates
-        # Calibration constant:
-        # rc: QPointF
-        #self.rc = QtCore.QPointF(320., 240.)
-        # Orientation of camera relative to SLM
-        # Calibration constant:
-        # theta: float
-        self.theta = 0.
         
     @jit
     def compute(self):
         psi = np.zeros((self.w, self.h), dtype=np.complex_)
         for properties in self.trapdata:
-            r = self.m * properties['r']
+            r = self.transformationMatrix.map(properties['r'])
             amp = properties['a'] * np.exp(1j * properties['phi'])
             ex = np.exp(self.iqx * r.x() + self.iqxsq * r.z())
             ey = np.exp(self.iqy * r.y() + self.iqysq * r.z())
             psi += np.outer(amp*ex, ey)
-        phi = (256. * (np.angle(psi) / np.pi + 1.)).astype(np.uint8)
+        phi = (128 * (np.angle(psi) / np.pi + 1.)).astype(np.uint8)
         self.slm.setData(phi)
 
     def updateSlmGeometry(self):
@@ -114,9 +110,9 @@ class CGH(object):
         self.compute()
 
     def updateTransformationMatrix(self):
-        self.m.setToIdentity()
-        self.m.translate(-self._rc.x(), -self._rc.y())
-        self.m.rotate(self._theta, 0., 0., 1.)
+        self.transformationMatrix.setToIdentity()
+        self.transformationMatrix.translate(-self._rc.x(), -self._rc.y())
+        self.transformationMatrix.rotate(self._theta, 0., 0., 1.)
 
     @property
     def rc(self):
