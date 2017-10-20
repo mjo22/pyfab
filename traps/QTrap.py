@@ -52,7 +52,7 @@ class QTrap(object):
 
     @property
     def r(self):
-        """Three-dimensional position of trap."""
+        """Three-dimensional position of a trap."""
         return self._r
 
     @r.setter
@@ -70,13 +70,13 @@ class QTrap(object):
 
     @property
     def pos(self):
-        """In-plane position of trap.
+        """In-plane position of a trap.
         """
         return self.r.toPointF()
 
     @property
     def state(self):
-        """Current state of trap
+        """Current state of a trap
         """
         return self._state
 
@@ -91,7 +91,7 @@ class QTrap(object):
 
     @property
     def spot(self):
-        """Graphical representation of trap.
+        """Graphical representation of a trap.
         """
         size = np.clip(10. + self.r.z()/10., 5., 20.)
         return {'pos': self.r.toPointF(),
@@ -102,7 +102,7 @@ class QTrap(object):
 
     @property
     def properties(self):
-        """Physical properties of trap.
+        """Physical properties of a trap.
         """
         return {'r': self.r,
                 'a': self.a,
