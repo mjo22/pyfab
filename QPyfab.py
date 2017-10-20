@@ -4,6 +4,7 @@ from QFabGraphicsView import QFabGraphicsView
 from QSLM import QSLM
 from CGH import CGH
 from QCGH import QCGH
+from QFabVideo import QFabRecorder, QFabMovie
 import sys
 import json
 
@@ -119,8 +120,6 @@ class QPyfab(QtGui.QMainWindow):
             self.sigClosed.emit()
         else:
             event.ignore()
-
-#class QFabCorder
             
         
 if __name__ == '__main__':

@@ -1,9 +1,10 @@
 
 """QFabRecorder.py: pyqtgraph module to record and play video files"""
 
-from pyqtgraph.Qt import QtCore
+from pyqtgraph import QtCore, QtGui
 import pyqtgraph as pg
 import cv2
+from skvideo.io import VideoWriter
 import numpy as np
 from datetime import datetime
 import os
@@ -30,7 +31,11 @@ class QFabRecorder(QtCore.QObject):
 	fourcc = cv2.cv.CV_FOURCC(*'XVID')
 	path = os.path.join(os.path.expanduser('~'), 'fabvideo', fn)
 	self.writer = cv2.VideoWriter(path, fourcc, self.camera.cameraDevice.fps, (int(self.camera.cameraDevice.size.width()), int(self.camera.cameraDevice.size.height())))
-
+	#self.writer.open(path, fourcc, self.camera.cameraDevice.fps, (int(self.camera.cameraDevice.size.width()), int(self.camera.cameraDevice.size.height())))
+	'''
+	self.writer = VideoWriter(path, frameSize=(self.camera.cameraDevice.size.width(), self.camera.cameraDevice.size.height()))
+	self.writer.open()
+	'''
 	#set properties
 	self._pause = True
 	self._record = record	#initialized to true by default
@@ -69,6 +74,7 @@ class QFabRecorder(QtCore.QObject):
         frame    	Frame emitted by camera to be written to .avi file. Is type np.ndarray.
         ==============  ===================================================================
         '''
+	#TO DO: write is being called continuously, but write is not writing to .avi file. May be a cv2 and linux compatibility problem? 
 	self.writer.write(frame)
 
     def stop(self):
@@ -124,6 +130,45 @@ class QFabMovie(pg.ImageItem):
     def cleanup(self):
 	#public
         pass
+
+
+class QFabcorder(QtGui.QVBoxLayout):
+    '''Widget to play and record video'''
+    def __init__(self, camera, parent=None, **kwargs):
+	'''Initializes
+	==============  ===================================================================
+        **Arguments:**
+        camera   	QCameraItem to be passed to QFabRecorder
+        ==============  ===================================================================
+	'''
+        super(QFabcorder, self).__init__(parent, **kwargs)
+	#set geometry
+
+	#init subwidgets
+
+	#add subwidgets
+	
+	#init recorder
+	self.fabrecord = QFabRecorder(camera)
+
+    #define subwidgets
+    def fileInput(self):
+	pass
+
+    def frames(self):
+	pass
+
+    def record(self):
+	pass
+
+    def replay(self):
+	pass
+
+    def framefeatureNum(self):
+	pass
+
+    def mode(self):
+	pass
 
 
 if __name__ == '__main__':
