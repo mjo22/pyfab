@@ -32,7 +32,7 @@ class QFabRecorder(QtCore.QObject):
 	self.writer = cv2.VideoWriter(path, fourcc, self.camera.cameraDevice.fps, (int(self.camera.cameraDevice.size.width()), int(self.camera.cameraDevice.size.height())))
 
 	#set properties
-	self._notWriting = True
+	self._pause = True
 	self._record = record	#initialized to true by default
 	self.record = self._record	#begin recording
 
@@ -55,8 +55,8 @@ class QFabRecorder(QtCore.QObject):
             raise ValueError("record must be of type boolean")
         self._record = record
 	if (record):
-	    if(self.notWriting):
-		self.notWriting = False
+	    if(self.pause):
+		self.pause = False
 		self.camera.sigFrameReady.connect(self.write)	
 	else:
 	    self.stop
@@ -79,23 +79,23 @@ class QFabRecorder(QtCore.QObject):
 	self.writer.release()
     
     @property
-    def notWriting(self):
-	return self._notWriting
+    def pause(self):
+	return self._pause
     
 
-    @notWriting.setter
-    def notWriting(self, notWriting):
+    @pause.setter
+    def pause(self, pause):
 	#public
 	'''
 	==============  ===================================================================
         **Arguments:**
-        notWriting   	Boolean value that determines whether the recording is paused.
+        pause   	Boolean value that determines whether the recording is paused.
         ==============  ===================================================================
 	'''
-	if (type(notWriting) != bool):
-            raise ValueError("notWriting must be of type boolean")
-	self._notWriting = notWriting
-	if (notWriting):
+	if (type(pause) != bool):
+            raise ValueError("pause must be of type boolean")
+	self._pause = pause
+	if (pause):
 	    self.camera.sigFrameReady.disconnect()
 
 

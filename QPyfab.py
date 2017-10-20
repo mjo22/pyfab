@@ -53,7 +53,8 @@ class QPyfab(QtGui.QMainWindow):
         self.layout = QtGui.QHBoxLayout()
         self.tabs = QtGui.QTabWidget()
         #add tabs
-        #self.tabs.addTab(WIDGET FOR RECORDING, PAUSING, AND PLAYING VIDEO, 'Fabcorder')    
+	#self.tabs.addTab( , "Fabcorder")
+	self.tabs.addTab(self.cgh, "CGH")   
 	#create layout
         self.layout.addWidget(self.fabscreen)
         self.layout.addWidget(self.tabs)
@@ -74,15 +75,15 @@ class QPyfab(QtGui.QMainWindow):
         saveCalibration = QtGui.QAction('&Save', self)
         saveCalibration.setShortcut('Ctrl+S')
         saveCalibration.setStatusTip('Save calibration settings')
-        saveCalibration.triggered.connect(self.pattern.pipeline.saveData)
+        saveCalibration.triggered.connect(self.cgh.saveData)
         restoreCalibration = QtGui.QAction('&Restore', self)
         restoreCalibration.setShortcut('Ctrl+R')
         restoreCalibration.setStatusTip('Restore calibration settings')
-        restoreCalibration.triggered.connect(self.pattern.pipeline.restoreData)
+        restoreCalibration.triggered.connect(self.cgh.restoreData)
 	calibrate = QtGui.QAction('&Calibrate', self)
         calibrate.setShortcut('Ctrl+K')
 	calibrate.setStatusTip('Calibrate pyfab')
-        calibrate.triggered.connect(self.pattern.pipeline.show)
+        calibrate.triggered.connect(self.cgh.show)
 	#for Traps
 
         #Add QActions to menubar
@@ -118,10 +119,12 @@ class QPyfab(QtGui.QMainWindow):
             self.sigClosed.emit()
         else:
             event.ignore()
+
+#class QFabCorder
             
         
 if __name__ == '__main__':
     import sys
     app = QtGui.QApplication(sys.argv)
-    mainWindow = pyfabMainWindow()
+    qfab = QPyfab()
     sys.exit(app.exec_())
