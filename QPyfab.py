@@ -28,7 +28,8 @@ class QPyfab(QtGui.QMainWindow):
         self.fabscreen = QFabGraphicsView(size=(640,480), gray=True, mirrored=False)
         self.pattern = QTrappingPattern(self.fabscreen)
         self.slm = QSLM()
-        self.pattern.pipeline = QCGH(slm=self.slm)
+	self.cgh = QCGH(slm=self.slm)
+        self.pattern.pipeline = self.cgh
         self.show()
     '''
     Initializes all QMainWindow GUI functionality. See inline comments for specifics.
