@@ -4,7 +4,7 @@ from QFabGraphicsView import QFabGraphicsView
 from QSLM import QSLM
 from CGH import CGH
 from QCGH import QCGH
-from QFabVideo import QFabRecorder, QFabMovie
+from fabdvr import fabdvr
 import sys
 import json
 

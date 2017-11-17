@@ -41,7 +41,7 @@ class QCameraDevice(QtCore.QObject):
                  mirrored=True,
                  flipped=True,
                  transposed=True,
-                 gray=False,
+                 gray=True,
                  size=None,
                  parent=None):
         super(QCameraDevice, self).__init__(parent)
@@ -167,7 +167,7 @@ class QCameraDevice(QtCore.QObject):
 
     @property
     def roi(self):
-        return QtCore.QRectF(QPoint(0, 0), self.size)
+        return QtCore.QRectF(QtCore.QPoint(0, 0), self.size)
 
 
 class QCameraItem(pg.ImageItem):
@@ -176,38 +176,41 @@ class QCameraItem(pg.ImageItem):
     a camera for updated video frames.
     """
 
-    sigFrameReady = QtCore.pyqtSignal(np.ndarray)
+    sigNewFrame = QtCore.pyqtSignal(np.ndarray)
 
-    def __init__(self, cameraDevice=None, parent=None, **kwargs):
+    def __init__(self, device=None, parent=None, **kwargs):
         super(QCameraItem, self).__init__(parent, **kwargs)
 
-        if cameraDevice is None:
-            self.cameraDevice = QCameraDevice(**kwargs).start()
+        if device is None:
+            self.device = QCameraDevice(**kwargs)
+	    self.device.start()
         else:
-            self.cameraDevice = cameraDevice.start()
-        ready, frame = self.cameraDevice.read()
+            self.device = device
+	    self.device.start()
+
+        ready, frame = self.device.read()
         if ready:
             self.setImage(frame, autoLevels=False)
 
         self._timer = QtCore.QTimer(self)
         self._timer.timeout.connect(self.nextframe)
-        self._timer.setInterval(1000 / self.cameraDevice.fps)
+        self._timer.setInterval(1000 / self.device.fps)
         self._timer.start()
         self.destroyed.connect(self.stop)
 
     def stop(self):
         self._timer.stop()
-        self.cameraDevice.stop()
+        self.device.stop()
 
     def close(self):
         self.stop()
-        self.cameraDevice.close()
+        self.device.close()
 
     def nextframe(self):
-        ready, frame = self.cameraDevice.read()
-        if ready:
-            self.setImage(frame, autoLevels=False)
-	    self.sigFrameReady.emit(frame)
+	ready, frame = self.device.read()
+	if ready:
+	    self.setImage(frame, autoLevels=False)
+	    self.sigNewFrame.emit(frame)
 	    	
 
     @property
@@ -223,7 +226,7 @@ class QCameraItem(pg.ImageItem):
 
     @property
     def size(self):
-        return self.cameraDevice.size
+        return self.device.size
 
     @size.setter
     def size(self, s):
@@ -231,7 +234,7 @@ class QCameraItem(pg.ImageItem):
 
     @property
     def roi(self):
-        return self.cameraDevice.roi
+        return self.device.roi
 
     @roi.setter
     def roi(self, r):

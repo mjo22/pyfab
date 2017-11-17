@@ -4,9 +4,10 @@
 
 import h5py
 import time
+from PyQt4 import QtCore
 
 
-class h5video(object):
+class h5video(QtCore.QObject):
     """Object for writing HDF5 video files
     """
 
@@ -32,6 +33,7 @@ class h5video(object):
         return "%.6f" % time.time()
 
     def write(self, image):
+	print 'h5 write'
         self.images.create_dataset(self.timestamp(), data=image)
 
     def filename(self):

@@ -61,7 +61,7 @@ class QCGH(QtGui.QTableWidget, CGH):
         self.lastSaved = self.getData()
         data = {'qpp': self.qpp, 'alpha': self.alpha, 'theta': self.theta, 'rc xc': self.rc.x(), 'rc yc': self.rc.y(), 'rc zc': self.rc.z(), 'rs xc': self.rs.x(), 'rs yc': self.rs.y(), 'rs zc': self.rs.z()}
         s = json.dumps(data)
-        with open("json/calibration.txt", "w") as f:
+        with open(".json/calibration.txt", "w") as f:
             f.write(s)
         self.constantsSaved = True
         
