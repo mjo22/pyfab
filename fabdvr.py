@@ -1,16 +1,18 @@
 import cv2
 from QCameraItem import QCameraItem
+from datetime import datetime
+import os
 
 
 class fabdvr(object):
 
-    def __init__(self, camera=None, filename='fabdvr.avi'):
+    def __init__(self, camera=None, filename='fabdvr'):
         self._writer = None
         self.camera = camera
         self.filename = filename
         self._framenumber = 0
         self._nframes = 0
-        self._fourcc = cv2.cv.CV_FOURCC(*'XVID')
+        self._fourcc = cv2.cv.CV_FOURCC(*'FMP4')
 
     def record(self, nframes=100):
         if (nframes > 0):
@@ -63,8 +65,11 @@ class fabdvr(object):
 
     @filename.setter
     def filename(self, filename):
+        ts = "_%s:%s_%s" % (datetime.now().hour, datetime.now().minute, datetime.now().date())
+	fn = filename + ts + ".avi"		
+	filepath = os.path.join(os.path.expanduser('~'), 'fabvideo', fn)
         if not self.isrecording():
-            self._filename = filename
+            self._filename = filepath
 
     def hascamera(self):
         return isinstance(self.camera, QCameraItem)
