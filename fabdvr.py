@@ -10,7 +10,7 @@ class fabdvr(object):
         self.filename = filename
         self._framenumber = 0
         self._nframes = 0
-        self._fourcc = cv2.cv.CV_FOURCC(*'FFV1')
+        self._fourcc = cv2.cv.CV_FOURCC(*'XVID')
 
     def record(self, nframes=100):
         if (nframes > 0):
@@ -96,5 +96,5 @@ if __name__ == '__main__':
     widget = QCameraWidget(camera, background='w')
     widget.show()
     dvr = fabdvr(camera=camera)
-    dvr.record(24)
+    dvr.record(100)
     sys.exit(app.exec_())
