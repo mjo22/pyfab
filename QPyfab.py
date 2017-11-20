@@ -104,22 +104,12 @@ class QPyfab(QtGui.QMainWindow):
     Close event triggered by exiting QPyfab. Prompts the user to make sure they meant to exit, and asks if they want to save calibration settings if they have not done so.
     '''
     def closeEvent(self, event):
-        result = QtGui.QMessageBox.question(self,
-                      "Confirm quit",
-                      "Are you sure you want to quit?",
-                      QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
-        if result == QtGui.QMessageBox.Yes:
-            if self.pattern.pipeline.constantsSaved == False:
-                savePrompt = QtGui.QMessageBox.question(self,
-                      "Save",
-                      "Do you want to save your calibration settings?",
-                      QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
-                if savePrompt == QtGui.QMessageBox.Yes:
-                    self.pattern.pipeline.saveData()
-            event.accept()
-            self.sigClosed.emit()
-        else:
-            event.ignore()
+        if self.pattern.pipeline.constantsSaved == False:
+            savePrompt = QtGui.QMessageBox.question(self, "Save", "Do you want to save your calibration settings?", QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+            if savePrompt == QtGui.QMessageBox.Yes:
+                self.pattern.pipeline.saveData()
+        event.accept()
+        self.sigClosed.emit()
             
         
 if __name__ == '__main__':
