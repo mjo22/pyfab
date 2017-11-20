@@ -1,5 +1,6 @@
 import cv2
 from QCameraItem import QCameraItem
+from PyQt4 import QtGui
 from datetime import datetime
 import os
 
@@ -14,7 +15,7 @@ class fabdvr(object):
         self._nframes = 0
         self._fourcc = cv2.cv.CV_FOURCC(*'FMP4')
 
-    def record(self, nframes=100):
+    def record(self, nframes=None):
         if (nframes > 0):
             self._nframes = nframes
             self.start()
@@ -38,7 +39,6 @@ class fabdvr(object):
         if self.isrecording():
             self.camera.sigNewFrame.disconnect()
             self._writer.release()
-            print('recording stopped')
         self.nframes = 0
         self._writer = None
 
@@ -46,9 +46,10 @@ class fabdvr(object):
         img = cv2.transpose(frame)
         img = cv2.flip(img, 0)
         self._writer.write(img)
-        self.framenumber += 1
-        if (self.framenumber == self._nframes):
-            self.stop()
+	print 'o'
+        #self.framenumber += 1
+        #if (self.framenumber == self._nframes):
+            #self.stop()
 
     @property
     def camera(self):
@@ -89,6 +90,47 @@ class fabdvr(object):
     def framenumber(self):
         return self._framenumber
 
+
+class QFabdvr(QtGui.QWidget):
+    '''Widget to play and record video
+    '''
+    def __init__(self, camera, parent=None, **kwargs):
+        super(QFabdvr, self).__init__(parent, **kwargs)
+
+	self.setGeometry(200,100,300,200)
+
+        self.dvr = fabdvr(camera=camera)
+
+        self.layout = QtGui.QHBoxLayout(self)
+        record = QtGui.QPushButton("Record", self)
+	record.clicked.connect(self.dvr.start)
+        stop =  QtGui.QPushButton("Stop", self)
+	record.clicked.connect(self.dvr.stop)
+        self.layout.addWidget(record)
+        self.layout.addWidget(stop)
+
+	self.setLayout(self.layout)
+        self.show()
+        
+        
+	#set geometry
+
+	#init subwidgets
+        
+	#add subwidgets
+
+    #define subwidgets
+
+
+    
+    def fileInput(self):
+	pass
+
+    def recorder(self):
+	pass
+
+    def replay(self):
+	pass
 
 if __name__ == '__main__':
     from PyQt4 import QtGui

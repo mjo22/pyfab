@@ -4,7 +4,7 @@ from QFabGraphicsView import QFabGraphicsView
 from QSLM import QSLM
 from CGH import CGH
 from QCGH import QCGH
-from fabdvr import fabdvr
+from fabdvr import fabdvr, QFabdvr
 import sys
 import json
 
@@ -31,6 +31,9 @@ class QPyfab(QtGui.QMainWindow):
         self.slm = QSLM()
 	self.cgh = QCGH(slm=self.slm)
         self.pattern.pipeline = self.cgh
+
+        self.dvr = QFabdvr(self.fabscreen.camera)
+        
         self.show()
     '''
     Initializes all QMainWindow GUI functionality. See inline comments for specifics.
@@ -54,7 +57,7 @@ class QPyfab(QtGui.QMainWindow):
         self.layout = QtGui.QHBoxLayout()
         self.tabs = QtGui.QTabWidget()
         #add tabs
-	#self.tabs.addTab( , "Fabcorder")
+	self.tabs.addTab(self.dvr, "Video")
 	self.tabs.addTab(self.cgh, "CGH")   
 	#create layout
         self.layout.addWidget(self.fabscreen)

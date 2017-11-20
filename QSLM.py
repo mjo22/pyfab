@@ -19,7 +19,7 @@ class QSLM(QtGui.QLabel):
             super(QSLM, self).__init__(parent)
             self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         else:
-            self.w, self.h = 512, 512
+            self.w, self.h = 1920, 1080
             super(QSLM, self).__init__(parent)
             self.setWindowTitle('SLM')
         self.image = QtGui.QImage()
