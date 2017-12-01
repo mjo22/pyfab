@@ -5,29 +5,37 @@
 import numpy as np
 import pyqtgraph as pg
 from pyqtgraph.Qt import QtCore, QtGui
-from QCameraItem import QCameraItem
+from QVideoItem import QVideoItem
 from PyQt4.QtCore import Qt
 
 
 class QFabGraphicsView(pg.GraphicsLayoutWidget):
     """Interactive display for pyfab system.
-    Incorporates a QCameraItem to display live video and a
+    Incorporates a QVideoItem to display live video and a
     ScatterPlotItem to present graphical representations of traps
     overlayed on the video stream.
     Interaction with traps is handled by emitting custom signals
     corresponding to mouse events.  A separate module must
     interpret these signals and update the trap display accordingly.
     """
+<<<<<<< HEAD
     sigFSMousePress = QtCore.pyqtSignal(QtGui.QMouseEvent)
     sigFSMouseMove = QtCore.pyqtSignal(QtGui.QMouseEvent)
     sigFSMouseRelease = QtCore.pyqtSignal(QtGui.QMouseEvent)
     sigFSWheel = QtCore.pyqtSignal(QtGui.QWheelEvent)
+=======
+    sigMousePress = QtCore.pyqtSignal(QtGui.QMouseEvent)
+    sigMouseMove = QtCore.pyqtSignal(QtGui.QMouseEvent)
+    sigMouseRelease = QtCore.pyqtSignal(QtGui.QMouseEvent)
+    sigWheel = QtCore.pyqtSignal(QtGui.QWheelEvent)
+>>>>>>> 6532502fe930486ec1e7d5fabb39cf57644da78f
 
     def __init__(self, parent=None, **kwargs):
         super(QFabGraphicsView, self).__init__(parent)
 
-        self.setAttribute(Qt.WA_DeleteOnClose, True)
+        # self.setAttribute(Qt.WA_DeleteOnClose, True)
 
+<<<<<<< HEAD
         # CameraItem displays video feed
         vb = self.addViewBox(border=None,
                              lockAspect=True,
@@ -40,6 +48,17 @@ class QFabGraphicsView(pg.GraphicsLayoutWidget):
         size = self.videosource.size
         vb.setLimits(xMin=0, yMin=0, xMax=size.width(), yMax=size.height())
         vb.setRange(xRange=[0, size.width()], yRange=[0, size.height()])
+=======
+        # VideoItem displays video feed
+        self.video = QVideoItem(**kwargs)
+        vb = self.addViewBox(enableMenu=False,
+                             enableMouse=False,
+                             lockAspect=1.)
+        vb.setRange(self.video.device.roi, padding=0, update=True)
+        # vb.setAspectLocked()
+        # vb.setBackgroundColor('w')
+        vb.addItem(self.video)
+>>>>>>> 6532502fe930486ec1e7d5fabb39cf57644da78f
 
         # ScatterPlotItem shows graphical representations of traps
         pen = pg.mkPen('k', width=0.5)
@@ -47,6 +66,12 @@ class QFabGraphicsView(pg.GraphicsLayoutWidget):
         self.traps = pg.ScatterPlotItem(size=10, pen=pen, brush=brush)
         vb.addItem(self.traps)
 
+<<<<<<< HEAD
+=======
+    def closeEvent(self, event):
+        self.video.close()
+
+>>>>>>> 6532502fe930486ec1e7d5fabb39cf57644da78f
     def selectedPoint(self, position):
         index = -1
         points = self.traps.pointsAt(position)
@@ -55,19 +80,19 @@ class QFabGraphicsView(pg.GraphicsLayoutWidget):
         return index
 
     def mousePressEvent(self, event):
-        self.sigFSMousePress.emit(event)
+        self.sigMousePress.emit(event)
         event.accept()
 
     def mouseMoveEvent(self, event):
-        self.sigFSMouseMove.emit(event)
+        self.sigMouseMove.emit(event)
         event.accept()
 
     def mouseReleaseEvent(self, event):
-        self.sigFSMouseRelease.emit(event)
+        self.sigMouseRelease.emit(event)
         event.accept()
 
     def wheelEvent(self, event):
-        self.sigFSWheel.emit(event)
+        self.sigWheel.emit(event)
         event.accept()
 
     def setData(self, **kwargs):
@@ -86,9 +111,9 @@ class demopattern(object):
     def __init__(self, fabscreen):
         self.fabscreen = fabscreen
         # Connect to signals coming from fabscreen
-        self.fabscreen.sigFSMousePress.connect(self.mousePress)
-        self.fabscreen.sigFSMouseMove.connect(self.mouseMove)
-        self.fabscreen.sigFSMouseRelease.connect(self.mouseRelease)
+        self.fabscreen.sigMousePress.connect(self.mousePress)
+        self.fabscreen.sigMouseMove.connect(self.mouseMove)
+        self.fabscreen.sigMouseRelease.connect(self.mouseRelease)
         # Graphics for traps
         self.brush = {'normal': pg.mkBrush(100, 255, 100, 120),
                       'selected': pg.mkBrush(255, 100, 100, 120)}
