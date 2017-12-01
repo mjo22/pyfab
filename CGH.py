@@ -68,8 +68,8 @@ class CGH(object):
             r = self.m * properties['r']
             amp = properties['a'] * np.exp(1j * properties['phi'])
             psi += self.compute_one(amp, r.x(), r.y(), r.z())
-        phi = (256. * (np.angle(psi) / np.pi + 1.)).astype(np.uint8)
-        self.slm.data = phi
+        phi = ((128./np.pi) * np.angle(psi) + 128.).astype(np.uint8)
+        self.slm.data = phi.T
 
     def updateGeometry(self):
         """Compute position-dependent properties in SLM plane.
@@ -119,7 +119,7 @@ class CGH(object):
     def updateTransformationMatrix(self):
         self.m.setToIdentity()
         self.m.translate(-self.rc)
-        self.m.rotate(self._theta, 0., 0., 1.)
+        self.m.rotate(self.theta, 0., 0., 1.)
 
     @property
     def rc(self):
@@ -142,7 +142,7 @@ class CGH(object):
     def theta(self, theta):
         self._theta = float(theta)
         self.updateTransformationMatrix()
-        self.compute
+        self.compute()
 
     def setData(self, trapdata):
         self.trapdata = trapdata
