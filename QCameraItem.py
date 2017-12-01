@@ -4,15 +4,9 @@
 
 import cv2
 import pyqtgraph as pg
-<<<<<<< HEAD
-from PyQt4.QtCore import Qt
-import numpy as np
-from pyqtgraph import QtCore
-=======
 from pyqtgraph.Qt import QtCore
 from PyQt4.QtCore import Qt
 import numpy as np
->>>>>>> 6532502fe930486ec1e7d5fabb39cf57644da78f
 
 
 def is_cv2():
@@ -20,15 +14,11 @@ def is_cv2():
 
 
 class QCameraThread(QtCore.QThread):
-<<<<<<< HEAD
-    def __init__(self, parent):
-=======
     """Grab frames as fast as possible in a separate thread
     to minimize latency for frame acquisition.
     """
 
     def __init__(self, camera):
->>>>>>> 6532502fe930486ec1e7d5fabb39cf57644da78f
         super(QCameraThread, self).__init__()
         self.camera = camera
         self.keepGrabbing = True
@@ -42,13 +32,7 @@ class QCameraThread(QtCore.QThread):
 
     def stop(self):
         self.keepGrabbing = False
-<<<<<<< HEAD
-    
-        
-=======
 
-
->>>>>>> 6532502fe930486ec1e7d5fabb39cf57644da78f
 class QCameraDevice(QtCore.QObject):
     """Low latency OpenCV camera intended to act as an image source
     for PyQt applications.
@@ -57,36 +41,15 @@ class QCameraDevice(QtCore.QObject):
 
     def __init__(self,
                  cameraId=0,
-<<<<<<< HEAD
-                 mirrored=True,
-                 flipped=True,
-                 transposed=True,
-                 gray=True,
-=======
->>>>>>> 6532502fe930486ec1e7d5fabb39cf57644da78f
                  size=None,
                  parent=None):
         super(QCameraDevice, self).__init__(parent)
 
-<<<<<<< HEAD
-        self.mirrored = mirrored
-        self.flipped = flipped
-        self.transposed = transposed
-        self.gray = gray
-	self.cameraId = cameraId
-        self.camera = cv2.VideoCapture(self.cameraId)
-=======
         self.camera = cv2.VideoCapture(cameraId)
->>>>>>> 6532502fe930486ec1e7d5fabb39cf57644da78f
         self.thread = QCameraThread(self.camera)
 
         self.size = size
 
-<<<<<<< HEAD
-        # self.fps = int(self.camera.get(cv2.CAP_PROP_FPS))
-        
-=======
->>>>>>> 6532502fe930486ec1e7d5fabb39cf57644da78f
         # if is_cv2():
         #    self.fps = int(self.camera.get(cv2.cv.CV_CAP_PROP_FPS))
         # else:
@@ -119,13 +82,8 @@ class QCameraDevice(QtCore.QObject):
             h = int(self.camera.get(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT))
             w = int(self.camera.get(cv2.cv.CV_CAP_PROP_FRAME_WIDTH))
         else:
-<<<<<<< HEAD
-            h = long(self.camera.get(cv2.CAP_PROP_FRAME_HEIGHT))
-            w = long(self.camera.get(cv2.CAP_PROP_FRAME_WIDTH))
-=======
             h = int(self.camera.get(cv2.CAP_PROP_FRAME_HEIGHT))
             w = int(self.camera.get(cv2.CAP_PROP_FRAME_WIDTH))
->>>>>>> 6532502fe930486ec1e7d5fabb39cf57644da78f
         return QtCore.QSizeF(w, h)
 
     @size.setter
@@ -152,11 +110,7 @@ class QCameraDevice(QtCore.QObject):
 
     @property
     def roi(self):
-<<<<<<< HEAD
-        return QtCore.QRectF(QtCore.QPoint(0, 0), self.size)
-=======
         return QtCore.QRectF(0., 0., self.size.width(), self.size.height())
->>>>>>> 6532502fe930486ec1e7d5fabb39cf57644da78f
 
 
 class QVideoItem(pg.ImageItem):
@@ -166,25 +120,6 @@ class QVideoItem(pg.ImageItem):
     """
 
     sigNewFrame = QtCore.pyqtSignal(np.ndarray)
-<<<<<<< HEAD
-
-    def __init__(self, device=None, parent=None, **kwargs):
-        super(QCameraItem, self).__init__(parent, **kwargs)
-
-        if device is None:
-            self.device = QCameraDevice(**kwargs)
-	    self.device.start()
-        else:
-            self.device = device
-	    self.device.start()
-
-        ready, frame = self.device.read()
-        if ready:
-            self.setImage(frame, autoLevels=False)
-
-        self._timer = QtCore.QTimer(self)
-        self._timer.timeout.connect(self.nextframe)
-=======
 
     def __init__(self, device=None, parent=None,
                  mirrored=True,
@@ -209,7 +144,6 @@ class QVideoItem(pg.ImageItem):
 
         self._timer = QtCore.QTimer(self)
         self._timer.timeout.connect(self.updateImage)
->>>>>>> 6532502fe930486ec1e7d5fabb39cf57644da78f
         self._timer.setInterval(1000 / self.device.fps)
         self._timer.start()
         self.destroyed.connect(self.stop)
@@ -222,14 +156,6 @@ class QVideoItem(pg.ImageItem):
         self.stop()
         self.device.close()
 
-<<<<<<< HEAD
-    def nextframe(self):
-	ready, frame = self.device.read()
-	if ready:
-	    self.setImage(frame, autoLevels=False)
-	    self.sigNewFrame.emit(frame)
-	    	
-=======
     @QtCore.pyqtSlot()
     def updateImage(self):
         ready, image = self.device.read()
@@ -241,7 +167,6 @@ class QVideoItem(pg.ImageItem):
                 image = cv2.flip(image, self.flipped * (1 - 2 * self.mirrored))
             self.setImage(image, autoLevels=False)
             self.sigNewFrame.emit(image)
->>>>>>> 6532502fe930486ec1e7d5fabb39cf57644da78f
 
     @property
     def paused(self):
@@ -255,23 +180,10 @@ class QVideoItem(pg.ImageItem):
             self._timer.start()
 
     @property
-<<<<<<< HEAD
-    def size(self):
-        return self.device.size
-
-    @size.setter
-    def size(self, s):
-        pass
-
-    @property
-    def roi(self):
-        return self.device.roi
-=======
     def gray(self):
         if is_cv2():
             return (self._conversion == cv2.cv.CV_BGR2GRAY)
         return (self._conversion == cv2.COLOR_BGR2GRAY)
->>>>>>> 6532502fe930486ec1e7d5fabb39cf57644da78f
 
     @gray.setter
     def gray(self, gray):

@@ -3,9 +3,6 @@
 """pyfab.py: Application that implements GUI holographic optical trapping."""
 
 from pyqtgraph.Qt import QtGui
-<<<<<<< HEAD
-from QPyfab import QPyfab
-=======
 from traps import QTrappingPattern
 from QFabGraphicsView import QFabGraphicsView
 from QSLM import QSLM
@@ -14,36 +11,11 @@ from QCGH import QCGH
 from QFabDVR import QFabDVR
 from QFabVideo import QFabVideo
 from QFabFilter import QFabFilter
->>>>>>> 6532502fe930486ec1e7d5fabb39cf57644da78f
 import sys
 import io
 import datetime
 import os
 
-<<<<<<< HEAD
-class pyfab(QtGui.QApplication):
-	
-    '''
-    Initializes pyfab, the application, and QPyfab, the GUI. Also handles the signal thrown by QPyfab that it has closed.
-    NOTE: When using the IPython kernel with pyqtgraph 0.10 and IPython 2.4.1, the PyQt event loop exec_() is not necessary to run the program and therefore a pyfab() instance can be manipulated from the command line.
-    pyfab will not run with the commands "python pyfab.py" or "ipython pyfab.py" with this implementation.
-    '''
-    def __init__(self, parent=None): 
-        super(pyfab,self).__init__(sys.argv)
-        self.qfab = QPyfab()
-        self.qfab.sigClosed.connect(self.cleanup)	#connects to cleanup method when qfab is closed
-    
-    '''
-    Closes out of pyfab by shutting down the camera, closing widgets, exiting pyfab
-    '''
-    def cleanup(self):
-        self.qfab.fabscreen.camera.close()
-        self.closeAllWindows()
-        self.exit()
-        
-if __name__ == '__main__':
-    app = pyfab()
-=======
 
 class pyfab(QtGui.QWidget):
 
@@ -111,4 +83,3 @@ if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
     instrument = pyfab()
     sys.exit(app.exec_())
->>>>>>> 6532502fe930486ec1e7d5fabb39cf57644da78f
