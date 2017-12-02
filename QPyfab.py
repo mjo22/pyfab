@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-"""pyfab.py: Application that implements GUI holographic optical trapping."""
+"""QPyfab.py: Application that implements GUI holographic optical trapping."""
 
-from pyqtgraph.Qt import QtGui
+from pyqtgraph.Qt import QtGui, QtCore
 from traps import QTrappingPattern
 from QFabGraphicsView import QFabGraphicsView
 from QSLM import QSLM
@@ -17,16 +17,18 @@ import datetime
 import os
 
 
-class pyfab(QtGui.QWidget):
+class QPyfab(QtGui.QMainWindow):
+	
+    sigClosed = QtCore.pyqtSignal()
 
     def __init__(self):
-        super(pyfab, self).__init__()
-        self.init_hardware()
-        self.init_ui()
-        self.init_configuration()
+		super(QPyfab, self).__init__()
+		self.init_hardware()
+		self.init_ui()
+		self.init_configuration()
 
     def init_hardware(self):
-        # video screen
+		# video screen
         screen_size = (640, 480)
         self.fabscreen = QFabGraphicsView(
             size=screen_size, gray=True, mirrored=False)
@@ -40,6 +42,9 @@ class pyfab(QtGui.QWidget):
         self.pattern.pipeline = self.cgh
 
     def init_ui(self):
+        self.setWindowTitle("Pyfab")
+        #set layout
+        wpyfab = QtGui.QWidget()
         layout = QtGui.QHBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(1)
@@ -55,7 +60,20 @@ class pyfab(QtGui.QWidget):
         controls.addWidget(QCGH(self.cgh))
         wcontrols.setLayout(controls)
         layout.addWidget(wcontrols)
-        self.setLayout(layout)
+        wpyfab.setLayout(layout)
+        #create menu bar
+        menu = QtGui.QMenuBar()
+        #calibration menu
+        self.calMenu = menu.addMenu('Calibration')
+        self._save = QtGui.QAction('&Save', self)
+        self.save = self._save
+        self.calMenu.addAction(self.save)
+        self._restore = QtGui.QAction('&Restore', self)
+        self.restore = self._restore
+        self.calMenu.addAction(self._restore)
+        self.setMenuBar(menu)
+        
+        self.setCentralWidget(wpyfab)
         self.show()
         self.dvr.recording.connect(self.handleRecording)
 
@@ -76,12 +94,35 @@ class pyfab(QtGui.QWidget):
         with io.open(fn, 'w', encoding='utf8') as configfile:
             configfile.write(unicode(scgh))
             
+            
     def closeEvent(self, event):
         self.save_configuration()
         self.slm.close()
-
+        self.sigClosed.emit()
+            
+    #Calibration menu QActions
+	@property
+	def save(self):
+		return self._save
+	
+	@save.setter
+	def save(self, save):
+		self._save = save
+		self._save.setShortcut('Ctrl+S')
+		self._save.triggered.connect(self.save_configuration)
+		
+	@property
+	def restore(self):
+		return self._restore
+		
+	@restore.setter
+	def restore(self, restore):
+		self._restore = restore
+		self._restore.setShortcut('Ctrl+R')
+		#self._restore.triggered.connect(self.)
+        
 
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
-    instrument = pyfab()
+    instrument = QPyfab()
     sys.exit(app.exec_())
