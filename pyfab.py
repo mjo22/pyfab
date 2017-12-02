@@ -66,6 +66,7 @@ class pyfab(QtGui.QMainWindow):
         tabs.addTab(self.controlTab(), 'Controls')
         tabs.addTab(self.trapTab(), 'Traps')
         layout.addWidget(tabs)
+        tabs.setFixedSize(tabs.size())
         
         wpyfab.setLayout(layout)
         self.setCentralWidget(wpyfab)
