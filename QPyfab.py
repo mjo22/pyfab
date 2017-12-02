@@ -98,6 +98,7 @@ class QPyfab(QtGui.QMainWindow):
     def closeEvent(self, event):
         self.save_configuration()
         self.slm.close()
+        self.fabscreen.camera.close()
         self.sigClosed.emit()
             
     #Calibration menu QActions

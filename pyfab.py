@@ -2,7 +2,7 @@
 
 """pyfab.py: Application that implements GUI holographic optical trapping."""
 
-from pyqtgraph.Qt import QtGui
+from pyqtgraph.Qt import QtGuigit 
 from QPyfab import QPyfab
 import sys
 
@@ -25,7 +25,6 @@ class pyfab(QtGui.QApplication):
     Closes out of pyfab by shutting down the camera, closing widgets, exiting pyfab
     '''
     def cleanup(self):
-        self.qfab.fabscreen.camera.close()
         self.closeAllWindows()
         self.exit()
         
