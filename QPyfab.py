@@ -43,6 +43,12 @@ class QPyfab(QtGui.QMainWindow):
 
     def init_ui(self):
         self.setWindowTitle("Pyfab")
+        #geometry
+        desktop = QtGui.QDesktopWidget()
+        w = desktop.screenGeometry().width()
+        h = desktop.screenGeometry().height()
+        r = w/h
+        self.setGeometry(w/4, w/5, w/2, h/2)
         #set layout
         wpyfab = QtGui.QWidget()
         layout = QtGui.QHBoxLayout()
@@ -90,10 +96,8 @@ class QPyfab(QtGui.QMainWindow):
         scgh = self.cgh.serialize()
         tn = datetime.datetime.now()
         fn = '~/.pyfab/pyfab_{:%Y%b%d_%H:%M:%S}.json'.format(tn)
-        fn = os.path.expanduser(fn)
         with io.open(fn, 'w', encoding='utf8') as configfile:
             configfile.write(unicode(scgh))
-            
             
     def closeEvent(self, event):
         self.save_configuration()

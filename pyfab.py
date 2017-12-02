@@ -2,7 +2,7 @@
 
 """pyfab.py: Application that implements GUI holographic optical trapping."""
 
-from pyqtgraph.Qt import QtGuigit 
+from pyqtgraph.Qt import QtGui
 from QPyfab import QPyfab
 import sys
 
