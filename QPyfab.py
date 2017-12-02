@@ -69,7 +69,7 @@ class QPyfab(QtGui.QMainWindow):
         wpyfab.setLayout(layout)
         #create menu bar
         menu = QtGui.QMenuBar()
-        #calibration menu
+			#calibration menu
         self.calMenu = menu.addMenu('Calibration')
         self._save = QtGui.QAction('&Save', self)
         self.save = self._save
