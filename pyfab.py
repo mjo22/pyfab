@@ -21,24 +21,25 @@ class pyfab(QtGui.QMainWindow):
 	
     sigClosed = QtCore.pyqtSignal()
 
-    def __init__(self):
-		super(pyfab, self).__init__()
-		self.init_hardware()
-		self.init_ui()
-		self.init_configuration()
+    def __init__(self, size=(640, 480)):
+        super(pyfab, self).__init__()
+        self.init_hardware(size)
+        self.init_ui()
+        self.init_configuration()
 
-    def init_hardware(self):
-		# video screen
-        screen_size = (640, 480)
-        self.fabscreen = QFabGraphicsView(
-            size=screen_size, gray=True, mirrored=False)
+    def init_hardware(self, size):
+        # video screen
+        self.fabscreen = QFabGraphicsView(size=size, gray=True)
+        self.video = QFabVideo(self.fabscreen.video)
+        self.filters = QFabFilter(self.fabscreen.video)
         # DVR
         self.dvr = QFabDVR(source=self.fabscreen.video)
+        self.dvr.recording.connect(self.handleRecording)
         # spatial light modulator
         self.slm = QSLM()
         # computation pipeline for the trapping pattern
-        self.pattern = QTrappingPattern(self.fabscreen)
         self.cgh = CGH(self.slm)
+        self.pattern = QTrappingPattern(self.fabscreen)
         self.pattern.pipeline = self.cgh
 
     def init_ui(self):
@@ -55,33 +56,48 @@ class pyfab(QtGui.QMainWindow):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(1)
         layout.addWidget(self.fabscreen)
-        wcontrols = QtGui.QWidget()
-        controls = QtGui.QVBoxLayout()
-        controls.setSpacing(1)
-        controls.setSizeConstraint(QtGui.QLayout.SetFixedSize)
-        controls.addWidget(self.dvr)
-        self.wvideo = QFabVideo(self.fabscreen.video)
-        controls.addWidget(self.wvideo)
-        controls.addWidget(QFabFilter(self.fabscreen.video))
-        controls.addWidget(QCGH(self.cgh))
-        wcontrols.setLayout(controls)
-        layout.addWidget(wcontrols)
         wpyfab.setLayout(layout)
-        #create menu bar
-        menu = QtGui.QMenuBar()
-			#calibration menu
-        self.calMenu = menu.addMenu('Calibration')
-        self._save = QtGui.QAction('&Save', self)
-        self.save = self._save
-        self.calMenu.addAction(self.save)
-        self._restore = QtGui.QAction('&Restore', self)
-        self.restore = self._restore
-        self.calMenu.addAction(self._restore)
-        self.setMenuBar(menu)
+        #menu bar
+        self.menu = QtGui.QMenuBar()
+        self.calibrationMenu()
+        self.setMenuBar(self.menu)
+        #tabs
+        tabs = QtGui.QTabWidget()
+        tabs.addTab(self.controlTab(), 'Controls')
+        tabs.addTab(self.trapTab(), 'Traps')
+        layout.addWidget(tabs)
         
+        wpyfab.setLayout(layout)
         self.setCentralWidget(wpyfab)
         self.show()
-        self.dvr.recording.connect(self.handleRecording)
+        
+    def calibrationMenu(self):
+        calMenu = self.menu.addMenu('Calibration')
+        self._save = QtGui.QAction('&Save', self)
+        self.save = self._save
+        calMenu.addAction(self.save)
+        self._restore = QtGui.QAction('&Restore', self)
+        self.restore = self._restore
+        calMenu.addAction(self._restore)
+
+    def controlTab(self):
+        wcontrols = QtGui.QWidget()
+        layout = QtGui.QVBoxLayout()
+        layout.setSpacing(1)
+        layout.addWidget(self.dvr)
+        layout.addWidget(self.video)
+        layout.addWidget(self.filters)
+        layout.addWidget(QCGH(self.cgh))
+        wcontrols.setLayout(layout)
+        return wcontrols
+
+    def trapTab(self):
+        wtraps = QtGui.QWidget()
+        layout = QtGui.QVBoxLayout()
+        layout.setSpacing(1)
+        layout.addWidget(QtGui.QLabel('placeholder'))
+        wtraps.setLayout(layout)
+        return wtraps
 
     def handleRecording(self, recording):
         self.wvideo.enabled = not recording
@@ -98,14 +114,14 @@ class pyfab(QtGui.QMainWindow):
         fn = '~/.pyfab/pyfab_{:%Y%b%d_%H:%M:%S}.json'.format(tn)
         with io.open(fn, 'w', encoding='utf8') as configfile:
             configfile.write(unicode(scgh))
-            
+
     def closeEvent(self, event):
         self.save_configuration()
         self.slm.close()
         self.fabscreen.camera.close()
         self.sigClosed.emit()
             
-    #Calibration menu QActions
+    #QActions
 	@property
 	def save(self):
 		return self._save
