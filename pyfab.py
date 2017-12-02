@@ -10,13 +10,16 @@ class pyfab(QtGui.QApplication):
 	
     '''
     Initializes pyfab, the application, and QPyfab, the GUI. Also handles the signal thrown by QPyfab that it has closed.
-    NOTE: When using the IPython kernel with pyqtgraph 0.10 and IPython 2.4.1, the PyQt event loop exec_() is not necessary to run the program and therefore a pyfab() instance can be manipulated from the command line.
-    pyfab will not run with the commands "python pyfab.py" or "ipython pyfab.py" with this implementation.
+    Dependecies: pyqtgraph=0.10, ipython=2
+    Commands for usage: 
+		1) ipython
+		2) from pyfab import pyfab
+		3) pyfab()
     '''
     def __init__(self, parent=None): 
         super(pyfab,self).__init__(sys.argv)
         self.qfab = QPyfab()
-        self.qfab.sigClosed.connect(self.cleanup)	#connects to cleanup method when qfab is closed
+        self.qfab.sigClosed.connect(self.cleanup)
     
     '''
     Closes out of pyfab by shutting down the camera, closing widgets, exiting pyfab
@@ -28,3 +31,4 @@ class pyfab(QtGui.QApplication):
         
 if __name__ == '__main__':
     app = pyfab()
+    sys.exit(app.exec_())
