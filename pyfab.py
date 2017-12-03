@@ -1,6 +1,12 @@
 #!/usr/bin/env python
 
-"""pyfab.py: Application that implements GUI holographic optical trapping."""
+"""pyfab.py: Application that implements GUI holographic optical trapping.
+   Dependecies: pyqtgraph=0.10, ipython=2
+   Commands for usage: 
+		1) ipython
+		2) from pyfab import pyfab
+		3) pyfab()
+"""
 
 from pyqtgraph.Qt import QtGui, QtCore
 from traps import QTrappingPattern
@@ -18,10 +24,9 @@ import os
 
 
 class pyfab(QtGui.QMainWindow):
-	
-    sigClosed = QtCore.pyqtSignal()
 
     def __init__(self, size=(640, 480)):
+        self.app = QtGui.QApplication(sys.argv)
         super(pyfab, self).__init__()
         self.init_hardware(size)
         self.init_ui()
@@ -122,7 +127,8 @@ class pyfab(QtGui.QMainWindow):
         self.save_configuration()
         self.slm.close()
         self.fabscreen.camera.close()
-        self.sigClosed.emit()
+        self.app.closeAllWindows()
+        self.app.exit()
             
     #QActions
 	@property
@@ -147,6 +153,5 @@ class pyfab(QtGui.QMainWindow):
         
 
 if __name__ == '__main__':
-    app = QtGui.QApplication(sys.argv)
     instrument = pyfab()
     sys.exit(app.exec_())
