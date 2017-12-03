@@ -101,7 +101,7 @@ class pyfab(QtGui.QMainWindow):
         return wtraps
 
     def handleRecording(self, recording):
-        self.wvideo.enabled = not recording
+        self.video.enabled = not recording
 
     def init_configuration(self):
         sz = self.fabscreen.video.device.size
