@@ -7,9 +7,8 @@
 		2) from pyfab import pyfab
 		3) pyfab()
 """
-
 from pyqtgraph.Qt import QtGui, QtCore
-from traps import QTrappingPattern
+from traps import QTrappingPattern, QTrapWidget
 from QFabGraphicsView import QFabGraphicsView
 from QSLM import QSLM
 from CGH import CGH
@@ -103,7 +102,7 @@ class pyfab(QtGui.QMainWindow):
         wtraps = QtGui.QWidget()
         layout = QtGui.QVBoxLayout()
         layout.setSpacing(1)
-        layout.addWidget(QtGui.QLabel('placeholder'))
+        layout.addWidget(QTrapWidget())
         wtraps.setLayout(layout)
         return wtraps
 
