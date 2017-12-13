@@ -11,7 +11,10 @@ from pyqtgraph.Qt import QtGui, QtCore
 from traps import QTrappingPattern, QTrapWidget
 from QFabGraphicsView import QFabGraphicsView
 from QSLM import QSLM
-from CGH import CGH
+try:
+    from cudaCGH import cudaCGH
+except ImportError:
+    from CGH import CGH
 from QCGH import QCGH
 from QFabDVR import QFabDVR
 from QFabVideo import QFabVideo
@@ -42,7 +45,10 @@ class pyfab(QtGui.QMainWindow):
         # spatial light modulator
         self.slm = QSLM()
         # computation pipeline for the trapping pattern
-        self.cgh = CGH(self.slm)
+        try:
+            self.cgh = cudaCGH(self.slm)
+        except NameError:
+            self.cgh = CGH(self.slm)
         self.pattern = QTrappingPattern(self.fabscreen)
         self.pattern.pipeline = self.cgh
 
@@ -73,9 +79,11 @@ class pyfab(QtGui.QMainWindow):
         layout.setStretch(0,2)
         layout.setStretch(1,1)
         #tabs.setFixedSize(tabs.size())
-        
+        layout.setAlignment(tabs, QtCore.Qt.AlignTop)
         wpyfab.setLayout(layout)
         self.setCentralWidget(wpyfab)
+        
+        
         self.show()
         
     def calibrationMenu(self):
@@ -90,6 +98,7 @@ class pyfab(QtGui.QMainWindow):
     def controlTab(self):
         wcontrols = QtGui.QWidget()
         layout = QtGui.QVBoxLayout()
+        layout.setAlignment(QtCore.Qt.AlignTop)
         layout.setSpacing(1)
         layout.addWidget(self.dvr)
         layout.addWidget(self.video)
@@ -101,6 +110,7 @@ class pyfab(QtGui.QMainWindow):
     def trapTab(self):
         wtraps = QtGui.QWidget()
         layout = QtGui.QVBoxLayout()
+        layout.setAlignment(QtCore.Qt.AlignTop)
         layout.setSpacing(1)
         layout.addWidget(QTrapWidget(self.pattern))
         wtraps.setLayout(layout)
